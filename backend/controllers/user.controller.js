@@ -121,17 +121,10 @@ export const updateProfile = async (req, res) => {
     try {
         const { fullname, email, mobilenumber } = req.body;
         
-        const file = req.file;
-        // cloudinary ayega idhar
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
+       
+        
 
-
-        let skillsArray;
-        if(skills){
-            skillsArray = skills.split(",");
-        }
         const userId = req.id; // middleware authentication
         let user = await User.findById(userId);
 
@@ -147,11 +140,7 @@ export const updateProfile = async (req, res) => {
         if(mobilenumber)  user.mobilenumber = mobilenumber
         
       
-        // resume comes later here...
-        if(cloudResponse){
-            user.profile.resume = cloudResponse.secure_url // save the cloudinary url
-            user.profile.resumeOriginalName = file.originalname // Save the original file name
-        }
+        
 
 
         await user.save();
@@ -173,4 +162,3 @@ export const updateProfile = async (req, res) => {
         console.log(error);
     }
 }
-

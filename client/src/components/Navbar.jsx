@@ -1,112 +1,94 @@
-import { useState } from 'react'
-import Close from './Close'
-import Menu from './Menu'
-import { Link } from 'react-scroll';
-
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import Close from "./Close";
+import Menu from "./Menu";
 
 export default function Navbar() {
+  const links = [
+    {
+      id: 1,
+      name: "Home",
+      link: "/",
+    },
+    {
+      id: 2,
+      name: "Turfs",
+      link: "/turfs",
+    },
+    {
+      id: 3,
+      name: "Contact",
+      link: "/contact",
+    },
+  ];
 
-    const links=[
-        {
-            id:1,
-            name:"Home"
+  const [btn, setBtn] = useState(false);
 
-        },
-
-        {
-             id:2,
-            name:"Turfs"
-
-        },
-
-        {
-             id:3,
-            name:"Contact"
-        }
-
-
-    ]
-
-    const[btn,setbtn]=useState(false)
- 
-    const togglebtn=()=>{
-      setbtn(!btn);
-    }
-
+  const toggleBtn = () => {
+    setBtn(!btn);
+  };
 
   return (
     <>
-    <nav >
-        <div className=' flex justify-center lg:flex lg:justify-start lg:mt-[10px] lg:ml-[10px] mt-[20px] pb-[-80px] '>
-            <p className='text-[30px] lg:text-3xl'>
-                Let's Goo....
-            </p>
-
+      <nav>
+        <div className="flex justify-center items-center lg:flex lg:justify-start lg:mt-[15px] lg:ml-[10px] mt-[20px] pb-[-80px]">
+          <p className="text-[30px] lg:text-3xl font-Ubun">Field Finder</p>
         </div>
 
-        <div className='lg:flex  lg:justify-center lg:gap-x-8 lg:text-[22px] cursor-pointer lg:mt-[-27px] hidden'>
-            {
-                links.map((val,id)=>{
-                    return(
-                        <ul key={id}  >
-                        <li>{val.name}</li>
-                        </ul>
-                    )
-
-                })
-            }
-
+        <div className="lg:flex lg:justify-center lg:gap-x-8 lg:text-[22px] cursor-pointer lg:mt-[-32px] hidden">
+          {links.map((val, id) => (
+            <ul key={id}>
+              <li className="relative group">
+                <Link to={val.link} className="hover:text-gray-900">
+                  {val.name}
+                </Link>
+                <span className="absolute left-0 bottom-0 w-full h-[2px] bg-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+              </li>
+            </ul>
+          ))}
         </div>
 
-        <div className='lg:flex lg:justify-end lg:mr-[30px] lg:mt-[-32px] hidden '>
-            <button className='border border-black lg:h-[35px] lg:w-[65px] lg:text-[20px] rounded-md ' >Login</button>
-        </div>
-
-        <div onClick={togglebtn} className="flex justify-end  pr-[30px] lg:hidden mt-[-35px] pb-[-80px] " >
-      <button className="h-[25px] w-[25px]  "   >{btn ? <Close/> :  <Menu/> }</button>
-      </div>
-
-
-
-      {btn && (
-  <div >
-<div  >
-  <ul className={`  ${btn? <Menu/>:<Close/>} text-2xl pt-[20px] text-black  w-screen bg-white opacity-95  flex flex-col align-center items-center   h-screen  `}>
-  <li  className="hover:text-[#576CBC] lg:px-4  my-[15px]">
-          <Link onClick={togglebtn} to='main' smooth={true} duration={500} >
-           HOME
+        <div className="lg:flex lg:justify-end lg:mr-[30px] lg:mt-[-32px] hidden">
+          <Link to="/login">
+            <button className="bg-black px-7 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
+              Login
+            </button>
           </Link>
-        </li>
-
-
-        <li  className="hover:text-[#576CBC] lg:px-4  my-[15px]">
-          <Link onClick={togglebtn} to='education' smooth={true} duration={500}>
-            TURFS
-          </Link>
-        </li>
-
-        <li  className="hover:text-[#576CBC] lg:px-4  my-[15px]">
-          <Link onClick={togglebtn} to='skills' smooth={true} duration={500} >
-          CONTACT
-          </Link>
-        </li>
-
-        <div >
-            <button className='border border-black h-[40px] w-[70px] rounded-md ' >Login</button>
         </div>
 
-      
+        <div
+          onClick={toggleBtn}
+          className="flex justify-end pr-[30px] lg:hidden mt-[-35px] pb-[-80px]"
+        >
+          <button className="h-[25px] w-[25px]">
+            {btn ? <Close /> : <Menu />}
+          </button>
+        </div>
 
-        
-  </ul>
-  </div>
-    </div>
-  
-)}
-
-
-
-    </nav>
+        {btn && (
+          <div>
+            <div>
+              <ul className="text-2xl pt-[20px] text-black w-screen bg-white opacity-95 flex flex-col align-center items-center h-screen">
+                {links.map((val, id) => (
+                  <li
+                    key={id}
+                    className="hover:text-[#576CBC] lg:px-4 my-[15px]"
+                  >
+                    <Link to={val.link} onClick={toggleBtn}>
+                      {val.name}
+                    </Link>
+                  </li>
+                ))}
+                <li className="hover:text-[#576CBC] lg:px-4 my-[15px]">
+                  <Link to="/login" onClick={toggleBtn}>
+                    Login
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </nav>
     </>
-  )
+  );
 }

@@ -1,41 +1,59 @@
-import React from 'react'
+import React from "react";
 
 export default function Sports() {
-  const images=[
-    { 
-      name:"CRICKET",
-      src:"./images/cricket.jpg"
-    },
-    {
-      name:"FOOTBALL",
-      src:"./images/football.jpg"},
-    {
-      name:"BADMINTON",
-      src:"./images/badminton.jpg"
-    }
-  ]
-
-
   return (
     <>
-    <div className=' lg:mt-[20px] lg:grid lg:grid-cols-3 lg:grid-rows-1 lg:gap-x-10 lg:ml-[200px] '>
+      <div>
+        <div>
+          <p className="lg:text-4xl lg:flex lg:justify-center"> Sports List</p>
+          <p className="lg:text-2xl lg:flex lg:justify-center">
+            {" "}
+            Come, Lets Play..
+          </p>
+        </div>
 
-      {
-        images.map((item,key)=>{
-          return(
-            <div>
-            <img src={item.src} className='lg:rounded-full lg:h-[160px] lg:w-[160px]'></img>
-            <p className='lg:pl-[40px] lg:text-[20px]'>{item.name}</p>
-            </div>
-          )
-        })
-      }
+        <div className="lg:grid lg:grid-rows-2 grid-cols-3">
+          <div className="lg:mb-[20px] lg:ml-[80px]">
+            <img
+              src="./images/3.jpeg"
+              alt="3"
+              className="lg:h-[350px] lg:w-[250px] rounded-3xl"
+            ></img>
+          </div>
 
-        
+          <div className="lg:mb-[20px] lg:ml-[80px]">
+            <img
+              src="./images/1.jpeg"
+              alt="1"
+              className="lg:h-[350px] lg:w-[250px] rounded-3xl"
+            ></img>
+          </div>
 
-       
+          <div className="lg:mb-[20px] lg:ml-[80px]">
+            <img
+              src="./images/2.jpeg"
+              alt="2"
+              className="lg:h-[350px] lg:w-[250px] rounded-3xl"
+            ></img>
+          </div>
 
-    </div>
+          <div className="lg:mb-[20px] lg:ml-[250px]">
+            <img
+              src="./images/1.jpeg"
+              alt="1"
+              className="lg:h-[350px] lg:w-[250px] rounded-3xl"
+            ></img>
+          </div>
+
+          <div className="lg:mb-[20px] lg:ml-[250px]">
+            <img
+              src="./images/3.jpeg"
+              alt="3"
+              className="lg:h-[350px] lg:w-[250px] rounded-3xl"
+            ></img>
+          </div>
+        </div>
+      </div>
     </>
-  )
+  );
 }

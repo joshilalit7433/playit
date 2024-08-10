@@ -65,29 +65,28 @@ export default function Navbar() {
           </button>
         </div>
 
-        {btn && (
-          <div>
-            <div>
-              <ul className="text-2xl pt-[20px] text-black w-screen bg-white opacity-95 flex flex-col align-center items-center h-screen">
-                {links.map((val, id) => (
-                  <li
-                    key={id}
-                    className="hover:text-[#576CBC] lg:px-4 my-[15px]"
-                  >
-                    <Link to={val.link} onClick={toggleBtn}>
-                      {val.name}
-                    </Link>
-                  </li>
-                ))}
-                <li className="hover:text-[#576CBC] lg:px-4 my-[15px]">
-                  <Link to="/login" onClick={toggleBtn}>
-                    Login
+        <div
+          className={`transition-all duration-500 ease-in-out ${
+            btn ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          } overflow-hidden lg:hidden`}
+        >
+          <div className="bg-white opacity-95">
+            <ul className="text-2xl pt-[20px] text-black w-screen flex flex-col align-center items-center h-screen">
+              {links.map((val, id) => (
+                <li key={id} className="hover:text-[#576CBC] lg:px-4 my-[15px]">
+                  <Link to={val.link} onClick={toggleBtn}>
+                    {val.name}
                   </Link>
                 </li>
-              </ul>
-            </div>
+              ))}
+              <li className="hover:text-[#576CBC] lg:px-4 my-[15px]">
+                <Link to="/login" onClick={toggleBtn}>
+                  Login
+                </Link>
+              </li>
+            </ul>
           </div>
-        )}
+        </div>
       </nav>
     </>
   );

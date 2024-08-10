@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 export default function Login() {
-  const initialvalues = { username: "", email: "", password: "" };
+  const initialvalues = { email: "", password: "" };
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
@@ -25,9 +25,6 @@ export default function Login() {
   const validate = (values) => {
     const errors = {};
     const regx = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/i;
-    if (!values.username) {
-      errors.username = "username is required";
-    }
 
     if (!values.email) {
       errors.email = "email is required";
@@ -48,41 +45,17 @@ export default function Login() {
 
   return (
     <>
-      <div className=" lg:flex lg:justify-center lg:items-center lg:mt-[100px] ">
+      <div className=" flex justify-center items-center mt-[100px] lg:flex lg:justify-center lg:items-center lg:mt-[100px] ">
         <form
           onSubmit={handlesubmit}
-          className=" lg:h-[500px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
+          className="  w-[310px] pl-[20px] pt-[30px] h-[400px]  lg:h-[500px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
         >
-          <p>
-            {Object.keys(formerrors).length === 0 && submit ? (
-              <div>Signed in Successfully</div>
-            ) : (
-              <div>{JSON.stringify(formvalues)}</div>
-            )}
-          </p>
-
-          <div className="lg:mb-[25px]   ">
-            <label className="lg:text-[25px] lg:flex lg:justify-center lg:items-center ">
-              Username:
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
-              <input
-                type="text"
-                onChange={change}
-                placeholder="Username"
-                name="username"
-                className="border-2 border-black lg:w-[250px]"
-                value={formvalues.username}
-              />
-            </div>
-            <p className=" lg:text-[20px] lg:flex lg:justify-center lg:items-center text-red-500">
-              {formerrors.username}
-            </p>
+          <div className="flex justify-center">
+            <p className="text-[25px] lg:text-[20px]">Login To Your Account</p>
           </div>
 
-          <div className="lg:mb-[25px]">
-            <label className="lg:text-[25px] lg:flex lg:justify-center lg:items-center">
+          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
+            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
               Email:
             </label>
 
@@ -92,7 +65,7 @@ export default function Login() {
                 onChange={change}
                 placeholder="Email"
                 name="email"
-                className="border-2 border-black lg:w-[250px]"
+                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
                 value={formvalues.email}
               />
             </div>
@@ -101,8 +74,8 @@ export default function Login() {
             </p>
           </div>
 
-          <div className="lg:mb-[25px]">
-            <label className="lg:text-[25px] lg:flex lg:justify-center lg:items-center">
+          <div className=" mb-[20px] lg:mb-[25px]">
+            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
               Password
             </label>
 
@@ -112,7 +85,7 @@ export default function Login() {
                 onChange={change}
                 placeholder="Password"
                 name="password"
-                className="border-2 border-black lg:w-[250px]"
+                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
                 value={formvalues.password}
               />
             </div>
@@ -121,8 +94,8 @@ export default function Login() {
             </p>
           </div>
 
-          <div className=" lg:flex lg:justify-center lg:items-center">
-            <button className="border-2 border-blue-900 bg-blue-400 text-white lg:h-[40px] lg:w-[120px] lg:text-[25px] rounded-lg font-bold">
+          <div className=" flex justify-center  lg:flex lg:justify-center lg:items-center">
+            <button className=" text-[20px] h-[45px] w-[90px] border-2 border-blue-900 bg-blue-400 text-white lg:h-[40px] lg:w-[120px] lg:text-[25px] rounded-lg font-bold">
               Submit
             </button>
           </div>

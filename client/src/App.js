@@ -5,7 +5,7 @@ import Home from "./routes/Home";
 import Contact from "./routes/Contact";
 import Turfs from "./routes/Turfs";
 import Login from "./routes/Login";
-
+import Signup from "./routes/Signup";
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +15,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/turfs" element={<Turfs />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </BrowserRouter>
   );

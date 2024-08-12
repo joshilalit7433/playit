@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
-export default function Login() {
-  const initialvalues = { email: "", password: "" };
+export default function Signup() {
+  const initialvalues = {
+    fullname: "",
+    email: "",
+    password: "",
+    mobilenumber: "",
+  };
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
@@ -27,6 +31,10 @@ export default function Login() {
     const errors = {};
     const regx = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/i;
 
+    if (!values.fullname) {
+      errors.fullname = "full name is required";
+    }
+
     if (!values.email) {
       errors.email = "email is required";
     } else if (!regx.test(values.email)) {
@@ -41,6 +49,15 @@ export default function Login() {
       errors.password = "password should not be more than 10 characters";
     }
 
+    if (!values.mobilenumber) {
+      errors.mobilenumber = "mobile number is required";
+    } else if (values.mobilenumber.length < 10) {
+      errors.mobilenumber = "invalid mobile number";
+    } else if (values.mobilenumber.length === 10) {
+      console.log("valid mobile number");
+    } else if (values.mobilenumber.length > 11) {
+      errors.mobilenumber = "invalid mobile number";
+    }
     return errors;
   };
 
@@ -49,10 +66,30 @@ export default function Login() {
       <div className=" flex justify-center items-center mt-[100px] lg:flex lg:justify-center lg:items-center lg:mt-[100px] ">
         <form
           onSubmit={handlesubmit}
-          className="  w-[310px] pl-[20px] pt-[30px] h-[400px]  lg:h-[500px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
+          className="  w-[310px] pl-[20px] pt-[30px] h-[600px]  lg:h-[900px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
         >
           <div className="flex justify-center">
-            <p className="text-[25px] lg:text-[20px]">Login To Your Account</p>
+            <p className="text-[25px] lg:text-[20px]">Sign Up</p>
+          </div>
+
+          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
+            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
+              Full Name:
+            </label>
+
+            <div className=" lg:flex lg:justify-center lg:items-center">
+              <input
+                type="text"
+                onChange={change}
+                placeholder="Full Name"
+                name="fullname"
+                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                value={formvalues.fullname}
+              />
+            </div>
+            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
+              {formerrors.fullname}
+            </p>
           </div>
 
           <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
@@ -90,15 +127,28 @@ export default function Login() {
                 value={formvalues.password}
               />
             </div>
-
-            {/* Dont have an account div  */}
-            <div className="cursor-pointer underline text-blue-500 lg:ml-[115px] lg:mt-2 ">
-              <Link to="/signup">
-                <span>Don't have an account?</span>
-              </Link>
-            </div>
             <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
               {formerrors.password}
+            </p>
+          </div>
+
+          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
+            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
+              Mobile Number:
+            </label>
+
+            <div className=" lg:flex lg:justify-center lg:items-center">
+              <input
+                type="number"
+                onChange={change}
+                placeholder="Mobile Number"
+                name="mobilenumber"
+                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                value={formvalues.mobilenumber}
+              />
+            </div>
+            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
+              {formerrors.mobilenumber}
             </p>
           </div>
 

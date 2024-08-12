@@ -18,7 +18,7 @@ export default function Sports() {
         <div className=" grid grid-rows-2 grid-cols-2 pl-[20px] lg:grid lg:grid-rows-1 lg:grid-cols-3 lg:pl-[200px]">
           <div className="lg:mb-[20px] ">
             <img
-              src="./images/cricket.jpg"
+              src="./images/cricket.jpeg"
               className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl"
             ></img>
             <p className=" text-xl ml-[40px] lg:text-[25px] lg:ml-[70px]">
@@ -28,7 +28,7 @@ export default function Sports() {
 
           <div className="lg:mb-[20px] ">
             <img
-              src="./images/badminton.jpg"
+              src="./images/badminton.jpeg"
               className="h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl"
             ></img>
             <p className=" text-xl ml-[20px] lg:text-[25px] lg:ml-[50px]">
@@ -38,7 +38,7 @@ export default function Sports() {
 
           <div className="lg:mb-[20px] ">
             <img
-              src="./images/football.jpg"
+              src="./images/football.jpeg"
               className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl"
             ></img>
             <p className=" text-xl ml-[30px] lg:text-[25px] lg:ml-[60px]">

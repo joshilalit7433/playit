@@ -29,7 +29,7 @@ export default function Hero() {
 
   return (
     <>
-      <div className=" mt-[20px] flex justify-center lg:flex lg:justify-center ">
+      <div className=" mt-[0px] lg:mt-0 flex justify-center lg:flex lg:justify-center ">
         <div className="  z-0 lg:z-0  mt-[120px] mr-[-280px]  lg:mr-[-1000px]   lg:mt-[400px]">
           <p className=" text-[20px] lg:text-4xl text-white pl-[40px] lg:pl-[560px]   ">
             Real Slot Booking Platform

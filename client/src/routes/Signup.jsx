@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 export default function Signup() {
   const initialvalues = {
     fullname: "",
@@ -66,7 +66,7 @@ export default function Signup() {
       <div className=" flex justify-center items-center mt-[100px] lg:flex lg:justify-center lg:items-center lg:mt-[100px] ">
         <form
           onSubmit={handlesubmit}
-          className="  w-[310px] pl-[20px] pt-[30px] h-[600px]  lg:h-[900px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
+          className="  w-[310px] pl-[20px] pt-[30px] h-[700px]  lg:h-[900px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
         >
           <div className="flex justify-center">
             <p className="text-[25px] lg:text-[20px]">Sign Up</p>
@@ -151,7 +151,11 @@ export default function Signup() {
               {formerrors.mobilenumber}
             </p>
           </div>
-
+          <div className="cursor-pointer underline text-blue-500 lg:ml-[115px] mb-5 ">
+            <Link to="/login">
+              <span>Already have an account?</span>
+            </Link>
+          </div>
           <div className=" flex justify-center  lg:flex lg:justify-center lg:items-center">
             <button className=" text-[20px] h-[45px] w-[90px] border-2 border-blue-900 bg-blue-400 text-white lg:h-[40px] lg:w-[120px] lg:text-[25px] rounded-lg font-bold">
               Submit

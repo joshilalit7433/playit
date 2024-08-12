@@ -1,53 +1,34 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const turfSchema=new mongoose.Schema({
-
-    turfid:{
-        type:Number,
-        unique:true
-    },
-
-    name:{
-        type:String,
-        required:true
+const turfSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
 
     location: {
-    type: {
       type: String,
-      enum: ['Point'],
-      required: true
-    },
-    coordinates: {
-      type: [Number],
-      required: true 
-
-    }
-},
-
-    description:{
-        type:String
     },
 
-    images:[
-        {type:String}
-    ],
+    description: {
+      type: String,
+    },
 
-    price:{
-        type: Object,
-        required: true,
-        hourlyrate: Number,
-        weekdayrate: Number,
-        weekendrate: Number, 
-        
+    images: {
+      type: String,
+    },
+
+    price: {
+      type: String,
     },
 
     ratings: {
-        type: Number,
-        default: 0
-      },
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
 
-    
-},{timestamps:true})
-
-export const Turf=mongoose.model("Turf",turfSchema)
+export const Turf = mongoose.model("Turf", turfSchema);

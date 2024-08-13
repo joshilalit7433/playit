@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { USER_API_END_POINT } from "../utils/constant.js";
+
 export default function Signup() {
   const initialvalues = {
     fullname: "",
@@ -7,6 +12,9 @@ export default function Signup() {
     password: "",
     mobilenumber: "",
   };
+
+  const navigate = useNavigate();
+
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
@@ -16,10 +24,51 @@ export default function Signup() {
     console.log(formvalues);
   };
 
-  const handlesubmit = (e) => {
+  const handlesubmit = async (e) => {
     e.preventDefault();
     setformerrors(validate(formvalues));
     setsubmit(true);
+    console.log(formvalues);
+    const formData = new FormData();
+    formData.append("fullname", formvalues.fullname);
+    formData.append("email", formvalues.email);
+    formData.append("mobilenumber", formvalues.mobilenumber);
+    formData.append("password", formvalues.password);
+
+    try {
+      const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: false,
+      });
+
+      if (res.data.success) {
+        navigate("/login");
+        toast("registered successfully", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("error", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
   };
 
   useEffect(() => {
@@ -45,8 +94,6 @@ export default function Signup() {
       errors.password = "password is required";
     } else if (values.password.length < 4) {
       errors.password = "password  should not be less than 4 character";
-    } else if (values.password.length > 10) {
-      errors.password = "password should not be more than 10 characters";
     }
 
     if (!values.mobilenumber) {
@@ -161,6 +208,7 @@ export default function Signup() {
               Submit
             </button>
           </div>
+          <ToastContainer />
         </form>
       </div>
     </>

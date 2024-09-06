@@ -4,6 +4,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { USER_API_END_POINT } from "../utils/constant.js";
+import { setUser } from "../redux/authSlice";
+import { useDispatch } from "react-redux";
 
 export default function Login() {
   const initialvalues = { email: "", password: "" };
@@ -11,6 +13,7 @@ export default function Login() {
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -36,6 +39,9 @@ export default function Login() {
       });
 
       if (res.data.success) {
+        console.log(res.data.user);
+
+        dispatch(setUser(res.data.user));
         navigate("/");
         toast("welcome back", {
           position: "top-center",

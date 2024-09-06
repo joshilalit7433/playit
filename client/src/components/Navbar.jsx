@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Close from "./Close";
 import Menu from "./Menu";
-
+import { useSelector } from "react-redux";
 export default function Navbar() {
+  const { user } = useSelector((store) => store.auth);
   const location = useLocation();
 
   // Check if the current path is either "/login" or "/signup"
@@ -56,13 +57,23 @@ export default function Navbar() {
           </div>
 
           {/* Conditionally render the Login button in the desktop version */}
-          {!isLoginOrSignupPage && (
-            <div className="lg:flex lg:justify-end lg:mr-[30px] lg:mt-[-32px] hidden">
-              <Link to="/login">
-                <button className="bg-black px-7 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
-                  Login
-                </button>
-              </Link>
+          {!user ? (
+            !isLoginOrSignupPage && (
+              <div className="lg:flex lg:justify-end lg:mr-[30px] lg:mt-[-32px] hidden">
+                <Link to="/login">
+                  <button className="bg-black px-7 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
+                    Login
+                  </button>
+                </Link>
+              </div>
+            )
+          ) : (
+            <div>
+              <img
+                src="./images/profileImage.jpg"
+                alt="Profile"
+                className="w-[40px] h-[40px] rounded-full object-cover"
+              />
             </div>
           )}
 

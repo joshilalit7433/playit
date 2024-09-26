@@ -37,7 +37,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="lg:h-[65px] h-[55px] bg-[#06D001] ">
+      <div className="lg:h-[65px] h-[55px] bg-[#06D001]  ">
         <nav>
           <div className="flex justify-center items-center lg:flex lg:justify-start lg:pt-[10px] lg:ml-[10px] mt-[0px] pb-[-80px]">
             <p className="text-[30px] lg:text-3xl font-Ubun">Field Finder</p>
@@ -72,7 +72,7 @@ export default function Navbar() {
               <img
                 src="./images/profileImage.jpg"
                 alt="Profile"
-                className="w-[40px] h-[40px] rounded-full object-cover"
+                className=" lg:float-right lg:mr-8 lg:mt-[-40px] lg:w-[40px]  lg:h-[40px] rounded-full object-cover"
               />
             </div>
           )}
@@ -104,12 +104,23 @@ export default function Navbar() {
                   </li>
                 ))}
                 {/* Conditionally render the Login link in the mobile menu */}
-                {!isLoginOrSignupPage && (
-                  <li className="hover:text-[#576CBC] lg:px-4 my-[15px]">
-                    <Link to="/login" onClick={toggleBtn}>
-                      Login
-                    </Link>
-                  </li>
+
+                {!user ? (
+                  !isLoginOrSignupPage && (
+                    <li className="hover:text-[#576CBC] lg:px-4 my-[15px]">
+                      <Link to="/login" onClick={toggleBtn}>
+                        Login
+                      </Link>
+                    </li>
+                  )
+                ) : (
+                  <div>
+                    <img
+                      src="./images/profileImage.jpg"
+                      alt="Profile"
+                      className="w-[40px] h-[40px] rounded-full object-cover"
+                    />
+                  </div>
                 )}
               </ul>
             </div>

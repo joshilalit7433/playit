@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { USER_API_END_POINT } from "../utils/constant.js";
 import { setUser } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
+import { Mail, Lock } from "lucide-react"; // Importing Lucide icons
 
 export default function Login() {
   const initialvalues = { email: "", password: "" };
@@ -24,7 +25,6 @@ export default function Login() {
     e.preventDefault();
     setformerrors(validate(formvalues));
     setsubmit(true);
-    console.log(formvalues);
 
     const formData = new FormData();
     formData.append("email", formvalues.email);
@@ -39,8 +39,6 @@ export default function Login() {
       });
 
       if (res.data.success) {
-        console.log(res.data.user);
-
         dispatch(setUser(res.data.user));
         navigate("/");
         toast("welcome back", {
@@ -55,7 +53,6 @@ export default function Login() {
         });
       }
     } catch (error) {
-      console.log(error);
       toast.error("error", {
         position: "top-center",
         autoClose: 5000,
@@ -70,7 +67,6 @@ export default function Login() {
   };
 
   useEffect(() => {
-    console.log(formerrors);
     if (Object.keys(formerrors).length === 0 && submit) console.log(formvalues);
   }, [formerrors]);
 
@@ -79,15 +75,15 @@ export default function Login() {
     const regx = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/i;
 
     if (!values.email) {
-      errors.email = "email is required";
+      errors.email = "Email is required";
     } else if (!regx.test(values.email)) {
-      errors.email = "this is not the valid format";
+      errors.email = "This is not a valid email format";
     }
 
     if (!values.password) {
-      errors.password = "password is required";
+      errors.password = "Password is required";
     } else if (values.password.length < 4) {
-      errors.password = "password  should not be less than 4 character";
+      errors.password = "Password should not be less than 4 characters";
     }
 
     return errors;
@@ -95,69 +91,76 @@ export default function Login() {
 
   return (
     <>
-      <div className=" flex justify-center items-center mt-[100px] lg:flex lg:justify-center lg:items-center lg:mt-[100px] ">
+      <div className="flex justify-center items-center mt-[100px]">
         <form
           onSubmit={handlesubmit}
-          className="  w-[310px] pl-[20px] pt-[30px] h-[400px]  lg:h-[500px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
+          className="w-[310px] h-[400px] lg:h-[450px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
         >
-          <div className="flex justify-center">
-            <p className="text-[25px] lg:text-[20px]">Login To Your Account</p>
+          <div className="text-center mb-6">
+            <p className="text-[25px] font-bold text-white">Customer Login</p>
           </div>
 
-          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
-            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
-              Email:
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
+          {/* Email Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Email ID:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <Mail className="text-white mr-2" /> {/* Lucide Email Icon */}
               <input
                 type="email"
                 onChange={change}
                 placeholder="Email"
                 name="email"
-                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                className="bg-transparent w-full text-white focus:outline-none"
                 value={formvalues.email}
               />
             </div>
-            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
-              {formerrors.email}
-            </p>
+            <p className="text-red-500">{formerrors.email}</p>
           </div>
 
-          <div className=" mb-[20px] lg:mb-[25px]">
-            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
-              Password
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
+          {/* Password Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Password:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <Lock className="text-white mr-2" /> {/* Lucide Lock Icon */}
               <input
                 type="password"
                 onChange={change}
                 placeholder="Password"
                 name="password"
-                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                className="bg-transparent w-full text-white focus:outline-none"
                 value={formvalues.password}
               />
             </div>
-
-            {/* Dont have an account div  */}
-            <div className="cursor-pointer underline text-blue-500 lg:ml-[115px] lg:mt-2 ">
-              <Link to="/signup">
-                <span>Don't have an account?</span>
-              </Link>
-            </div>
-            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
-              {formerrors.password}
-            </p>
+            <p className="text-red-500">{formerrors.password}</p>
           </div>
 
-          <div className=" flex justify-center  lg:flex lg:justify-center lg:items-center">
-            <button className=" text-[20px] h-[45px] w-[90px] border-2 border-blue-900 bg-blue-400 text-white lg:h-[40px] lg:w-[120px] lg:text-[25px] rounded-lg font-bold">
-              Submit
+          {/* Remember Me and Forgot Password */}
+          <div className="flex justify-between text-white text-sm mb-6">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" />
+              Remember me
+            </label>
+            <Link to="/forgot-password" className="underline">
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <button className="text-[20px] w-full py-2 bg-white text-[#31a022] rounded-lg font-bold">
+              LOGIN
             </button>
+          </div>
+
+          {/* Don't have an account? */}
+          <div className="text-center mt-4">
+            <Link to="/signup" className="text-white underline">
+              Don't have an account?
+            </Link>
           </div>
         </form>
       </div>
+      <ToastContainer />
     </>
   );
 }

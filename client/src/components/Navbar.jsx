@@ -37,7 +37,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="lg:h-[65px] h-[55px] bg-[#06D001]  ">
+      <div className="lg:h-[65px] h-[55px] bg-[#31a022]  ">
         <nav>
           <div className="flex justify-center items-center lg:flex lg:justify-start lg:pt-[10px] lg:ml-[10px] mt-[0px] pb-[-80px]">
             <p className="text-[30px] lg:text-3xl font-Ubun">Field Finder</p>

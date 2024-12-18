@@ -4,6 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { USER_API_END_POINT } from "../utils/constant.js";
+import { Mail, Lock, Phone, User } from "lucide-react"; // Importing Lucide icons
 
 export default function Signup() {
   const initialvalues = {
@@ -14,21 +15,20 @@ export default function Signup() {
   };
 
   const navigate = useNavigate();
-
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
+
   const change = (e) => {
     const { name, value } = e.target;
     setformvalues({ ...formvalues, [name]: value });
-    console.log(formvalues);
   };
 
   const handlesubmit = async (e) => {
     e.preventDefault();
     setformerrors(validate(formvalues));
     setsubmit(true);
-    console.log(formvalues);
+
     const formData = new FormData();
     formData.append("fullname", formvalues.fullname);
     formData.append("email", formvalues.email);
@@ -45,7 +45,7 @@ export default function Signup() {
 
       if (res.data.success) {
         navigate("/login");
-        toast("registered successfully", {
+        toast("Registered successfully", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -57,7 +57,6 @@ export default function Signup() {
         });
       }
     } catch (error) {
-      console.log(error);
       toast.error("error", {
         position: "top-center",
         autoClose: 5000,
@@ -71,146 +70,133 @@ export default function Signup() {
     }
   };
 
-  useEffect(() => {
-    console.log(formerrors);
-    if (Object.keys(formerrors).length === 0 && submit) console.log(formvalues);
-  }, [formerrors]);
-
   const validate = (values) => {
     const errors = {};
     const regx = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/i;
 
     if (!values.fullname) {
-      errors.fullname = "full name is required";
+      errors.fullname = "Full name is required";
     }
 
     if (!values.email) {
-      errors.email = "email is required";
+      errors.email = "Email is required";
     } else if (!regx.test(values.email)) {
-      errors.email = "this is not the valid format";
+      errors.email = "This is not a valid email format";
     }
 
     if (!values.password) {
-      errors.password = "password is required";
+      errors.password = "Password is required";
     } else if (values.password.length < 4) {
-      errors.password = "password  should not be less than 4 character";
+      errors.password = "Password should not be less than 4 characters";
     }
 
     if (!values.mobilenumber) {
-      errors.mobilenumber = "mobile number is required";
-    } else if (values.mobilenumber.length < 10) {
-      errors.mobilenumber = "invalid mobile number";
-    } else if (values.mobilenumber.length === 10) {
-      console.log("valid mobile number");
-    } else if (values.mobilenumber.length > 11) {
-      errors.mobilenumber = "invalid mobile number";
+      errors.mobilenumber = "Mobile number is required";
+    } else if (
+      values.mobilenumber.length < 10 ||
+      values.mobilenumber.length > 11
+    ) {
+      errors.mobilenumber = "Invalid mobile number";
     }
+
     return errors;
   };
 
   return (
     <>
-      <div className=" flex justify-center items-center mt-[100px] lg:flex lg:justify-center lg:items-center lg:mt-[100px] ">
+      <div className="flex justify-center items-center mt-[100px]">
         <form
           onSubmit={handlesubmit}
-          className="  w-[310px] pl-[20px] pt-[30px] h-[700px]  lg:h-[900px] lg:w-[500px] border-2 border-black lg:pt-[50px]"
+          className="w-[310px] h-[550px] lg:h-[600px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
         >
-          <div className="flex justify-center">
-            <p className="text-[25px] lg:text-[20px]">Sign Up</p>
+          <div className="text-center mb-6">
+            <p className="text-[25px] font-bold text-white">Sign Up</p>
           </div>
 
-          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
-            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
-              Full Name:
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
+          {/* Full Name Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Full Name:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <User className="text-white mr-2" /> {/* Lucide User Icon */}
               <input
                 type="text"
                 onChange={change}
                 placeholder="Full Name"
                 name="fullname"
-                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                className="bg-transparent w-full text-white focus:outline-none"
                 value={formvalues.fullname}
               />
             </div>
-            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
-              {formerrors.fullname}
-            </p>
+            <p className="text-red-500">{formerrors.fullname}</p>
           </div>
 
-          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
-            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
-              Email:
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
+          {/* Email Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Email:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <Mail className="text-white mr-2" /> {/* Lucide Email Icon */}
               <input
                 type="email"
                 onChange={change}
                 placeholder="Email"
                 name="email"
-                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                className="bg-transparent w-full text-white focus:outline-none"
                 value={formvalues.email}
               />
             </div>
-            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
-              {formerrors.email}
-            </p>
+            <p className="text-red-500">{formerrors.email}</p>
           </div>
 
-          <div className=" mb-[20px] lg:mb-[25px]">
-            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
-              Password
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
+          {/* Password Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Password:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <Lock className="text-white mr-2" /> {/* Lucide Lock Icon */}
               <input
                 type="password"
                 onChange={change}
                 placeholder="Password"
                 name="password"
-                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                className="bg-transparent w-full text-white focus:outline-none"
                 value={formvalues.password}
               />
             </div>
-            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
-              {formerrors.password}
-            </p>
+            <p className="text-red-500">{formerrors.password}</p>
           </div>
 
-          <div className=" mb-[20px] mt-[20px] lg:mb-[25px]">
-            <label className=" text-[20px] lg:text-[25px] lg:flex lg:justify-center lg:items-center">
-              Mobile Number:
-            </label>
-
-            <div className=" lg:flex lg:justify-center lg:items-center">
+          {/* Mobile Number Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Mobile Number:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <Phone className="text-white mr-2" /> {/* Lucide Phone Icon */}
               <input
                 type="number"
                 onChange={change}
                 placeholder="Mobile Number"
                 name="mobilenumber"
-                className=" h-[40px]  rounded-md border-2 border-black lg:w-[250px]"
+                className="bg-transparent w-full text-white focus:outline-none"
                 value={formvalues.mobilenumber}
               />
             </div>
-            <p className=" lg:text-[20px] text-red-500 lg:flex lg:justify-center lg:items-center">
-              {formerrors.mobilenumber}
-            </p>
+            <p className="text-red-500">{formerrors.mobilenumber}</p>
           </div>
-          <div className="cursor-pointer underline text-blue-500 lg:ml-[115px] mb-5 ">
-            <Link to="/login">
-              <span>Already have an account?</span>
-            </Link>
-          </div>
-          <div className=" flex justify-center  lg:flex lg:justify-center lg:items-center">
-            <button className=" text-[20px] h-[45px] w-[90px] border-2 border-blue-900 bg-blue-400 text-white lg:h-[40px] lg:w-[120px] lg:text-[25px] rounded-lg font-bold">
-              Submit
+
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <button className="text-[20px] w-full py-2 bg-white text-[#31a022] rounded-lg font-bold">
+              SIGN UP
             </button>
           </div>
-          <ToastContainer />
+
+          {/* Already have an account? */}
+          <div className="text-center mt-4">
+            <Link to="/login" className="text-white underline">
+              Already have an account?
+            </Link>
+          </div>
         </form>
       </div>
+      <ToastContainer />
     </>
   );
 }

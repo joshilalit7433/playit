@@ -12,6 +12,7 @@ export default function Signup() {
     email: "",
     password: "",
     mobilenumber: "",
+    role: "",
   };
 
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export default function Signup() {
     formData.append("email", formvalues.email);
     formData.append("mobilenumber", formvalues.mobilenumber);
     formData.append("password", formvalues.password);
+    formData.append("role", formvalues.role);
 
     try {
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
@@ -99,15 +101,19 @@ export default function Signup() {
       errors.mobilenumber = "Invalid mobile number";
     }
 
+    if (!values.role) {
+      errors.role = "Role Is Required";
+    }
+
     return errors;
   };
 
   return (
     <>
-      <div className="flex justify-center items-center mt-[100px]">
+      <div className="flex justify-center items-center mt-[100px] lg:mt-[50px] lg:mb-[50px]">
         <form
           onSubmit={handlesubmit}
-          className="w-[310px] h-[550px] lg:h-[600px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
+          className="w-[310px] h-[550px] lg:h-[800px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
         >
           <div className="text-center mb-6">
             <p className="text-[25px] font-bold text-white">Sign Up</p>
@@ -127,7 +133,7 @@ export default function Signup() {
                 value={formvalues.fullname}
               />
             </div>
-            <p className="text-red-500">{formerrors.fullname}</p>
+            <p className="text-black">{formerrors.fullname}</p>
           </div>
 
           {/* Email Input */}
@@ -144,7 +150,7 @@ export default function Signup() {
                 value={formvalues.email}
               />
             </div>
-            <p className="text-red-500">{formerrors.email}</p>
+            <p className="text-black">{formerrors.email}</p>
           </div>
 
           {/* Password Input */}
@@ -161,7 +167,7 @@ export default function Signup() {
                 value={formvalues.password}
               />
             </div>
-            <p className="text-red-500">{formerrors.password}</p>
+            <p className="text-black">{formerrors.password}</p>
           </div>
 
           {/* Mobile Number Input */}
@@ -178,7 +184,39 @@ export default function Signup() {
                 value={formvalues.mobilenumber}
               />
             </div>
-            <p className="text-red-500">{formerrors.mobilenumber}</p>
+            <p className="text-black">{formerrors.mobilenumber}</p>
+          </div>
+
+          {/* Role Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Role:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <input
+                type="radio"
+                id="User"
+                name="role"
+                value="User"
+                checked={initialvalues.role === "User"}
+                onChange={change}
+              />
+              <label for="html" className="text-white text-[18px]">
+                User
+              </label>
+
+              <input
+                type="radio"
+                id="Admin"
+                name="role"
+                value="Admin"
+                className="lg:ml-4"
+                checked={initialvalues.role === "Admin"}
+                onChange={change}
+              />
+              <label for="html" className="text-white text-[18px]">
+                Admin
+              </label>
+            </div>
+            <p className="text-black">{formerrors.role}</p>
           </div>
 
           {/* Submit Button */}

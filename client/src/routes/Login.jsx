@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { Mail, Lock } from "lucide-react"; // Importing Lucide icons
 
 export default function Login() {
-  const initialvalues = { email: "", password: "" };
+  const initialvalues = { email: "", password: "", role: "" };
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
@@ -29,6 +29,7 @@ export default function Login() {
     const formData = new FormData();
     formData.append("email", formvalues.email);
     formData.append("password", formvalues.password);
+    formData.append("role", formvalues.role);
 
     try {
       const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
@@ -86,15 +87,19 @@ export default function Login() {
       errors.password = "Password should not be less than 4 characters";
     }
 
+    if (!values.role) {
+      errors.role = "Role Is Required";
+    }
+
     return errors;
   };
 
   return (
     <>
-      <div className="flex justify-center items-center mt-[100px]">
+      <div className="flex justify-center items-center mt-[100px] lg:mt-[50px] lg:mb-[50px]">
         <form
           onSubmit={handlesubmit}
-          className="w-[310px] h-[400px] lg:h-[450px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
+          className="w-[310px] h-[400px] lg:h-[600px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
         >
           <div className="text-center mb-6">
             <p className="text-[25px] font-bold text-white">Customer Login</p>
@@ -114,7 +119,7 @@ export default function Login() {
                 value={formvalues.email}
               />
             </div>
-            <p className="text-red-500">{formerrors.email}</p>
+            <p className="text-black">{formerrors.email}</p>
           </div>
 
           {/* Password Input */}
@@ -131,7 +136,37 @@ export default function Login() {
                 value={formvalues.password}
               />
             </div>
-            <p className="text-red-500">{formerrors.password}</p>
+            <p className="text-black">{formerrors.password}</p>
+          </div>
+
+          {/* Role Input */}
+          <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Role:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <input
+                type="radio"
+                id="User"
+                name="role"
+                value="user"
+                onChange={change}
+              />
+              <label for="html" className="text-white text-[18px]">
+                User
+              </label>
+
+              <input
+                type="radio"
+                id="Admin"
+                name="role"
+                value="admin"
+                className="lg:ml-4"
+                onChange={change}
+              />
+              <label for="html" className="text-white text-[18px]">
+                Admin
+              </label>
+            </div>
+            <p className="text-black">{formerrors.role}</p>
           </div>
 
           {/* Remember Me and Forgot Password */}

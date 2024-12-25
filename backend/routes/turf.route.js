@@ -5,6 +5,6 @@ import isAuthenticated from "../middlewares/isAuthenticated.js";
 const router = express.Router();
 
 router.route("/postTurf").post(isAuthenticated, postTurf);
-router.route("/getTurf").get(isAuthenticated, getTurfs);
+router.route("/getTurf").get( getTurfs);
 
 export default router;

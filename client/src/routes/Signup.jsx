@@ -195,8 +195,7 @@ export default function Signup() {
                 type="radio"
                 id="User"
                 name="role"
-                value="User"
-                checked={initialvalues.role === "User"}
+                value="user"
                 onChange={change}
               />
               <label for="html" className="text-white text-[18px]">
@@ -207,9 +206,8 @@ export default function Signup() {
                 type="radio"
                 id="Admin"
                 name="role"
-                value="Admin"
+                value="admin"
                 className="lg:ml-4"
-                checked={initialvalues.role === "Admin"}
                 onChange={change}
               />
               <label for="html" className="text-white text-[18px]">

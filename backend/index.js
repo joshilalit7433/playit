@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import connectdb from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
 import turfRoute from "./routes/turf.route.js";
-
+import subcriptionRoute from "./routes/subcription.route.js";
 dotenv.config({});
 const app = express();
 
@@ -34,6 +34,9 @@ app.use("/api/v1/turf", turfRoute);
 // 'http://localhost:8000/api/v1/turf/postTurf'
 // 'http://localhost:8000/api/v1/turf/getTurf'
 
+app.use("/api/v1/subcription", subcriptionRoute);
+
+// http://localhost:8000/api/v1/subcription/
 app.listen(PORT, () => {
   connectdb();
   console.log(`server running on port ${PORT}`);

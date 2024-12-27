@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const BookingForm = () => {
+  const location = useLocation();
+  const turf = location.state?.turf;
+
   const [formData, setFormData] = useState({
-    turfName: "",
     bookingDate: "",
     startTime: "",
     endTime: "",
@@ -16,7 +19,10 @@ const BookingForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Booking data submitted: ", formData);
+    console.log("Booking data submitted: ", {
+      ...formData,
+      turfName: turf.name,
+    });
     // Add logic to integrate with backend API
   };
 
@@ -28,24 +34,12 @@ const BookingForm = () => {
       >
         <h1 className="text-2xl font-bold mb-4 text-center">Book Your Turf</h1>
 
-        {/* Turf Name */}
+        {/* Display Turf Name */}
         <div className="mb-4">
-          <label
-            htmlFor="turfName"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label className="block text-gray-700 font-medium mb-2">
             Turf Name
           </label>
-          <input
-            type="text"
-            id="turfName"
-            name="turfName"
-            value={formData.turfName}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter Turf Name"
-            required
-          />
+          <p className="text-lg">{turf.name}</p>
         </div>
 
         {/* Time Selection */}

@@ -1,13 +1,17 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SingleTurfDetail = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const turf = location.state?.turf;
 
   if (!turf) {
     return <p>Loading turf details...</p>;
   }
+
+  const handleBookNow = () => {
+    navigate(`/turfs/${turf._id}/booking`, { state: { turf } });
+  };
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6">
@@ -30,7 +34,10 @@ const SingleTurfDetail = () => {
         <strong>Description:</strong> {turf.description}
       </p>
       <div className="flex justify-center mt-6">
-        <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition">
+        <button
+          className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition"
+          onClick={handleBookNow}
+        >
           Book Now
         </button>
       </div>

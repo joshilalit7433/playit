@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 const BookingForm = () => {
@@ -12,9 +12,30 @@ const BookingForm = () => {
     amountPaid: 0,
   });
 
+  useEffect(() => {
+    if (formData.startTime && formData.endTime) {
+      const start = new Date(`1970-01-01T${formData.startTime}:00`);
+      const end = new Date(`1970-01-01T${formData.endTime}:00`);
+      const minutes = (end - start) / 1000 / 60;
+      const hours = minutes / 60;
+      const totalAmount = hours * turf.price;
+      setFormData({ ...formData, amountPaid: totalAmount });
+    }
+  }, [formData.startTime, formData.endTime, turf.price]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleTimeChange = (e) => {
+    const { name, value } = e.target;
+    const [hours, minutes] = value.split(":");
+    if (minutes === "00" || minutes === "30") {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      alert("Please select minutes as 00 or 30.");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -55,8 +76,9 @@ const BookingForm = () => {
             id="startTime"
             name="startTime"
             value={formData.startTime}
-            onChange={handleChange}
+            onChange={handleTimeChange}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            step="1800" // 30 minutes step
             required
           />
         </div>
@@ -73,8 +95,9 @@ const BookingForm = () => {
             id="endTime"
             name="endTime"
             value={formData.endTime}
-            onChange={handleChange}
+            onChange={handleTimeChange}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            step="1800" // 30 minutes step
             required
           />
         </div>
@@ -100,22 +123,10 @@ const BookingForm = () => {
 
         {/* Amount Paid */}
         <div className="mb-4">
-          <label
-            htmlFor="amountPaid"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label className="block text-gray-700 font-medium mb-2">
             Amount Paid
           </label>
-          <input
-            type="number"
-            id="amountPaid"
-            name="amountPaid"
-            value={formData.amountPaid}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter Amount"
-            required
-          />
+          <p className="text-lg">{formData.amountPaid}</p>
         </div>
 
         {/* Pay Now Button */}

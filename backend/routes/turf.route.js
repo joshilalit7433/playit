@@ -7,4 +7,5 @@ const router = express.Router();
 router.route("/postTurf").post(isAuthenticated, postTurf);
 router.route("/getTurf").get( getTurfs);
 
+
 export default router;

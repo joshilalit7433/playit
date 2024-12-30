@@ -3,7 +3,7 @@ import axios from "axios";
 import { TURF_API_END_POINT } from "../utils/constant.js";
 import { useNavigate } from "react-router-dom";
 
-export default function Turf() {
+export default function Turf({ filters }) {
   const [turfs, setTurfs] = useState([]);
   const navigate = useNavigate();
 
@@ -14,6 +14,9 @@ export default function Turf() {
         setTurfs(response.data.turfs);
       } catch (error) {
         console.error("Error fetching turfs:", error);
+        if (error.response) {
+          console.error("Response error:", error.response);
+        }
       }
     };
 
@@ -24,11 +27,20 @@ export default function Turf() {
     navigate(`/turfs/${turf._id}`, { state: { turf } });
   };
 
+  // Filter turfs based on the filters
+  const filteredTurfs = turfs.filter((turf) => {
+    const matchesLocation = !filters.Location || turf.location === filters.Location;
+    const matchesSport = !filters.Sports || turf.sports_type === filters.Sports;
+    const matchesPrice =
+      !filters.Price || turf.price === parseInt(filters.Price, 10); // Convert filters.Price to number
+    return matchesLocation && matchesSport && matchesPrice;
+  });
+
   return (
     <div>
       <h1 className="lg:ml-[250px] lg:text-[25px] lg:mt-4 lg:mb-4">Turfs</h1>
       <div className="lg:grid lg:grid-rows-3 lg:grid-cols-3 lg:ml-[220px] gap-6">
-        {turfs.map((turf) => (
+        {filteredTurfs.map((turf) => (
           <div
             key={turf._id}
             className="mt-2 mb-10 h-[380px] w-[320px] rounded-lg shadow-lg shadow-black mr-4 lg:mr-10 cursor-pointer bg-white"
@@ -50,8 +62,7 @@ export default function Turf() {
                 <strong>Location:</strong> {turf.location || "N/A"}
               </p>
               <p className="text-[16px] text-gray-600 mt-2">
-                <strong>Rating:</strong>{" "}
-                {turf.ratings ? `${turf.ratings} / 5` : "N/A"}
+                <strong>Sport:</strong> {turf.sports_type || "N/A"}
               </p>
               <p className="text-[16px] text-gray-600 mt-2">
                 <strong>Price:</strong> ₹{turf.price || "N/A"} per hour

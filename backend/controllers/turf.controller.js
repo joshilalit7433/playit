@@ -2,9 +2,9 @@ import { Turf } from "../models/turf.model.js";
 
 export const postTurf = async (req, res) => {
   try {
-    const { name, location, description, images, price, ratings } = req.body;
+    const { name, location, description, images, price, sports_type, ratings } = req.body;
 
-    if (!name || !location || !description || !images || !price || !ratings) {
+    if (!name || !location || !description || !images || !price ||! sports_type || !ratings) {
       return res.status(400).json({
         message: "Something is missing.",
         success: false,
@@ -16,6 +16,7 @@ export const postTurf = async (req, res) => {
       description,
       images,
       price,
+      sports_type,
       ratings,
     });
     return res.status(201).json({
@@ -51,3 +52,4 @@ export const getTurfs = async (req, res) => {
     });
   }
 };
+

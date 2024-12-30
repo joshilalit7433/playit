@@ -20,7 +20,12 @@ const turfSchema = new mongoose.Schema(
     },
 
     price: {
-      type: String,
+      type: Number,
+    },
+
+    sports_type:{
+      type:String,
+
     },
 
     ratings: {

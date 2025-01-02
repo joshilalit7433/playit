@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -18,6 +18,7 @@ export default function Signup() {
   const navigate = useNavigate();
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
+  // eslint-disable-next-line
   const [submit, setsubmit] = useState(false);
 
   const change = (e) => {
@@ -74,7 +75,7 @@ export default function Signup() {
 
   const validate = (values) => {
     const errors = {};
-    const regx = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/i;
+    const regx = /^\w+([.-]?\w+)@\w+([.-]?\w+)(\.\w{2,3})+$/i;
 
     if (!values.fullname) {
       errors.fullname = "Full name is required";

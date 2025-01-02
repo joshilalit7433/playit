@@ -1,12 +1,12 @@
 import React from "react";
 import Hero from "../components/Hero";
-import Sports from "../components/Sports";
 import Footer from "../components/Footer";
+import Sports from "../components/Sports";
 const Home = () => {
   return (
     <>
       <Hero />
-      <Sports />
+      <Sports/>
       <Footer />
     </>
   );

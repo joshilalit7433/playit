@@ -1,3 +1,4 @@
+// Login.js
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -42,7 +43,21 @@ export default function Login() {
       if (res.data.success) {
         dispatch(setUser(res.data.user));
         navigate("/");
-        toast("welcome back", {
+
+        // Success Toast
+        toast.success(res.data.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      } else {
+        // Error Toast for unsuccessful login
+        toast.error(res.data.message || "Login failed. Please try again.", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -54,7 +69,8 @@ export default function Login() {
         });
       }
     } catch (error) {
-      toast.error("error", {
+      // Error Toast for server or network errors
+      toast.error("An error occurred. Please check your credentials and try again.", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -195,7 +211,7 @@ export default function Login() {
           </div>
         </form>
       </div>
-      <ToastContainer />
     </>
   );
 }
+

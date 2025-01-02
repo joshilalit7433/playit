@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       required: true,
     },
+    userPhoto: {
+      type: String,
+      default: "https://via.placeholder.com/150",
+    },
   },
   { timestamps: true }
 );

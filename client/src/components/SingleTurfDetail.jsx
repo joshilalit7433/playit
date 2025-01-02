@@ -1,11 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const SingleTurfDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const turf = location.state?.turf;
 
+  const { user } = useSelector((store) => store.auth); // Access user data from Redux
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [startSlot, setStartSlot] = useState(null);
   const [endSlot, setEndSlot] = useState(null);
@@ -75,7 +77,7 @@ const SingleTurfDetail = () => {
   const weekDates = getCurrentWeekDates();
 
   const isNightTime = (time) => {
-    const [hourString, minuteString] = time.split(":");
+    const [hourString] = time.split(":");
     const period = time.slice(-2); // Extract AM/PM
     let hour = parseInt(hourString, 10);
 
@@ -102,6 +104,13 @@ const SingleTurfDetail = () => {
   };
 
   const handleProceedToBooking = () => {
+    if (!user) {
+      // Redirect to login if the user is not logged in
+      alert("Please log in to proceed with booking.");
+      navigate("/login");
+      return;
+    }
+
     if (!startSlot || !endSlot) {
       alert("Please select both a start time and an end time.");
       return;
@@ -204,7 +213,7 @@ const SingleTurfDetail = () => {
           onClick={handleProceedToBooking}
           className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
         >
-          Proceed to Booking
+          {user ? "Proceed to Booking" : "Please log in to book"}
         </button>
       </div>
     </div>

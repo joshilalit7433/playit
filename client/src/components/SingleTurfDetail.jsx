@@ -7,8 +7,7 @@ const SingleTurfDetail = () => {
   const navigate = useNavigate();
   const turf = location.state?.turf;
 
-  const { user } = useSelector((store) => store.auth); // Access user data from Redux
-  const [selectedSlots, setSelectedSlots] = useState([]);
+  const { user } = useSelector((store) => store.auth);
   const [startSlot, setStartSlot] = useState(null);
   const [endSlot, setEndSlot] = useState(null);
 
@@ -17,10 +16,9 @@ const SingleTurfDetail = () => {
   }
 
   const getCurrentWeekDates = () => {
-    const startDate = new Date(); // Current date
+    const startDate = new Date();
     const weekDates = [];
 
-    // Generate 7 days starting from today
     for (let i = 0; i < 7; i++) {
       const currentDate = new Date(startDate);
       currentDate.setDate(startDate.getDate() + i);
@@ -78,7 +76,7 @@ const SingleTurfDetail = () => {
 
   const isNightTime = (time) => {
     const [hourString] = time.split(":");
-    const period = time.slice(-2); // Extract AM/PM
+    const period = time.slice(-2);
     let hour = parseInt(hourString, 10);
 
     if (period === "PM" && hour !== 12) {
@@ -88,7 +86,7 @@ const SingleTurfDetail = () => {
       hour = 0;
     }
 
-    return hour >= 18 || hour < 6; // Nighttime is between 6 PM and 6 AM
+    return hour >= 18 || hour < 6;
   };
 
   const toggleSlotSelection = (date, time) => {
@@ -103,9 +101,31 @@ const SingleTurfDetail = () => {
     }
   };
 
+  const isBackwardTiming = () => {
+    const startTimeParts = startSlot.time.split(" ");
+    const endTimeParts = endSlot.time.split(" ");
+    const [startHours, startMinutes] = startTimeParts[0].split(":").map(Number);
+    const [endHours, endMinutes] = endTimeParts[0].split(":").map(Number);
+
+    const startPeriod = startTimeParts[1];
+    const endPeriod = endTimeParts[1];
+
+    let startHours24 =
+      startPeriod === "PM" && startHours !== 12 ? startHours + 12 : startHours;
+    let endHours24 =
+      endPeriod === "PM" && endHours !== 12 ? endHours + 12 : endHours;
+
+    if (startPeriod === "AM" && startHours === 12) startHours24 = 0;
+    if (endPeriod === "AM" && endHours === 12) endHours24 = 0;
+
+    const start = new Date(1970, 0, 1, startHours24, startMinutes);
+    const end = new Date(1970, 0, 1, endHours24, endMinutes);
+
+    return end < start;
+  };
+
   const handleProceedToBooking = () => {
     if (!user) {
-      // Redirect to login if the user is not logged in
       alert("Please log in to proceed with booking.");
       navigate("/login");
       return;
@@ -121,7 +141,11 @@ const SingleTurfDetail = () => {
       return;
     }
 
-    // Redirect to /turfs/:id/booking and pass the data
+    if (isBackwardTiming()) {
+      alert("Invalid time: End time must be after start time.");
+      return;
+    }
+
     navigate(`/turfs/${turf._id}/booking`, {
       state: { turf, startSlot, endSlot },
     });
@@ -148,7 +172,6 @@ const SingleTurfDetail = () => {
         <strong>Description:</strong> {turf.description}
       </p>
 
-      {/* Schedule UI */}
       <div
         className="overflow-y-auto overflow-x-auto mb-6"
         style={{ maxHeight: "400px" }}

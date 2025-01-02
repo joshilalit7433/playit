@@ -26,9 +26,9 @@ const BookingForm = () => {
     const end = new Date(1970, 0, 1, endHours24, endMinutes);
 
     const durationInHours = (end - start) / (1000 * 60 * 60); // Convert milliseconds to hours
-    const totalCost = Math.ceil(durationInHours) * turf.price; // Multiply by hourly price
+    const totalCost = durationInHours * turf.price; // Multiply by hourly price
 
-    return totalCost;
+    return totalCost.toFixed(2); // Keep two decimal places for clarity
   };
 
   const handleSubmit = (e) => {
@@ -40,7 +40,7 @@ const BookingForm = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
-        <h1 className="text-2xl font-bold mb-4 text-center">Book Your Turf</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Booking Details</h1>
 
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">

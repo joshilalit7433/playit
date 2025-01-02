@@ -1,39 +1,33 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const SingleTurfDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const turf = location.state?.turf;
 
+  const [selectedSlots, setSelectedSlots] = useState([]);
+  const [startSlot, setStartSlot] = useState(null);
+  const [endSlot, setEndSlot] = useState(null);
+
   if (!turf) {
     return <p>Loading turf details...</p>;
   }
 
-  const handleBookNow = () => {
-    navigate(`/turfs/${turf._id}/booking`, { state: { turf } });
-  };
-
-  // Helper to get IST time
-  const getISTTime = () => {
-    const now = new Date();
-    const istTime = new Date(now.getTime() + 5.5 * 60 * 60 * 1000); // Convert to IST
-    return istTime;
-  };
-
-  const getWeekDates = () => {
-    const startDate = new Date("2024-12-30"); // Starting date: December 30, 2024
-    const endDate = new Date("2025-01-30"); // Ending date: January 30, 2025
+  const getCurrentWeekDates = () => {
+    const startDate = new Date(); // Current date
     const weekDates = [];
 
-    // Loop through dates from start to end and add them to the weekDates array
-    while (startDate <= endDate) {
+    // Generate 7 days starting from today
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
       weekDates.push(
-        startDate.toLocaleDateString("en-IN", {
+        currentDate.toLocaleDateString("en-IN", {
           day: "2-digit",
           month: "short",
         })
       );
-      startDate.setDate(startDate.getDate() + 1); // Increment date by 1
     }
     return weekDates;
   };
@@ -78,28 +72,50 @@ const SingleTurfDetail = () => {
     "12:00 AM",
   ];
 
-  const weekDates = getWeekDates(); // Get dynamic dates from Dec 30, 2024 to Jan 30, 2025
+  const weekDates = getCurrentWeekDates();
 
-  // Helper function to determine if time is after 6:00 PM
   const isNightTime = (time) => {
-    const nightTimes = [
-      "6:00 PM",
-      "6:30 PM",
-      "7:00 PM",
-      "7:30 PM",
-      "8:00 PM",
-      "8:30 PM",
-      "9:00 PM",
-      "9:30 PM",
-      "10:00 PM",
-      "10:30 PM",
-      "11:00 PM",
-      "11:30 PM",
-      "12:00 AM",
-    ];
+    const [hourString, minuteString] = time.split(":");
+    const period = time.slice(-2); // Extract AM/PM
+    let hour = parseInt(hourString, 10);
 
-    console.log("Checking time:", time, nightTimes.includes(time)); // Debugging line
-    return nightTimes.includes(time);
+    if (period === "PM" && hour !== 12) {
+      hour += 12;
+    }
+    if (period === "AM" && hour === 12) {
+      hour = 0;
+    }
+
+    return hour >= 18 || hour < 6; // Nighttime is between 6 PM and 6 AM
+  };
+
+  const toggleSlotSelection = (date, time) => {
+    const slot = { date, time };
+    if (!startSlot) {
+      setStartSlot(slot);
+    } else if (!endSlot) {
+      setEndSlot(slot);
+    } else {
+      setStartSlot(slot);
+      setEndSlot(null);
+    }
+  };
+
+  const handleProceedToBooking = () => {
+    if (!startSlot || !endSlot) {
+      alert("Please select both a start time and an end time.");
+      return;
+    }
+
+    if (startSlot.date !== endSlot.date) {
+      alert("Start time and end time must be on the same day.");
+      return;
+    }
+
+    // Redirect to /turfs/:id/booking and pass the data
+    navigate(`/turfs/${turf._id}/booking`, {
+      state: { turf, startSlot, endSlot },
+    });
   };
 
   return (
@@ -145,33 +161,38 @@ const SingleTurfDetail = () => {
           <tbody>
             {times.map((time, rowIndex) => (
               <tr key={rowIndex}>
-                {rowIndex % 2 === 0 && (
-                  <td
-                    rowSpan={2}
-                    className={`border border-gray-300 px-4 py-2 text-center ${
-                      isNightTime(time)
-                        ? "bg-black text-white"
-                        : "bg-lightBlue-100"
-                    }`}
-                  >
-                    {isNightTime(time) ? "🌙" : "🌞"}
-                  </td>
-                )}
-                <td className="border border-gray-300 px-4 py-2 text-center text-red-500">
-                  {time}
+                <td
+                  className={`border border-gray-300 px-4 py-2 text-center ${
+                    isNightTime(time) ? "bg-black text-white" : "bg-yellow-100"
+                  }`}
+                >
+                  {isNightTime(time) ? "🌙" : "🌞"}
                 </td>
-                {weekDates.map((_, colIndex) => (
-                  <td
-                    key={colIndex}
-                    className={`border border-gray-300 px-4 py-2 text-center ${
-                      isNightTime(time)
-                        ? "bg-black text-white"
-                        : "bg-lightBlue-100 text-gray-800"
-                    }`}
-                  >
-                    {time}
-                  </td>
-                ))}
+                {weekDates.map((date, colIndex) => {
+                  const isSelected =
+                    (startSlot &&
+                      startSlot.date === date &&
+                      startSlot.time === time) ||
+                    (endSlot && endSlot.date === date && endSlot.time === time);
+
+                  return (
+                    <td
+                      key={colIndex}
+                      className={`border border-gray-300 px-4 py-2 text-center cursor-pointer ${
+                        isNightTime(time)
+                          ? isSelected
+                            ? "bg-green-500 text-white"
+                            : "bg-black text-white hover:bg-gray-800"
+                          : isSelected
+                          ? "bg-green-500 text-white"
+                          : "bg-yellow-100 text-gray-800 hover:bg-yellow-200"
+                      }`}
+                      onClick={() => toggleSlotSelection(date, time)}
+                    >
+                      {time}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
@@ -180,10 +201,10 @@ const SingleTurfDetail = () => {
 
       <div className="flex justify-center mt-6">
         <button
-          className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition"
-          onClick={handleBookNow}
+          onClick={handleProceedToBooking}
+          className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
         >
-          Book Now
+          Proceed to Booking
         </button>
       </div>
     </div>

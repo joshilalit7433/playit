@@ -1,61 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 
 const BookingForm = () => {
   const location = useLocation();
-  const turf = location.state?.turf;
+  const { turf, startSlot, endSlot } = location.state;
 
-  const [formData, setFormData] = useState({
-    bookingDate: "",
-    startTime: "",
-    endTime: "",
-    amountPaid: 0,
-  });
+  const calculateTotalCost = () => {
+    const start = new Date(
+      `1970-01-01T${convertTo24HourFormat(startSlot.time)}`
+    );
+    const end = new Date(`1970-01-01T${convertTo24HourFormat(endSlot.time)}`);
+    const durationInHours = (end - start) / (1000 * 60 * 60);
 
-  useEffect(() => {
-    if (formData.startTime && formData.endTime) {
-      const start = new Date(`1970-01-01T${formData.startTime}:00`);
-      const end = new Date(`1970-01-01T${formData.endTime}:00`);
-      const minutes = (end - start) / 1000 / 60;
-      const hours = minutes / 60;
-      const totalAmount = hours * turf.price;
-      setFormData({ ...formData, amountPaid: totalAmount });
+    // Ensure duration is greater than 0
+    if (durationInHours <= 0) {
+      return 0;
     }
-  }, [formData.startTime, formData.endTime, turf.price]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    return Math.ceil(durationInHours) * turf.price;
   };
 
-  const handleTimeChange = (e) => {
-    const { name, value } = e.target;
-    const [hours, minutes] = value.split(":");
-    if (minutes === "00" || minutes === "30") {
-      setFormData({ ...formData, [name]: value });
-    } else {
-      alert("Please select minutes as 00 or 30.");
+  // Converts 12-hour time to 24-hour format for Date object compatibility
+  const convertTo24HourFormat = (time) => {
+    const [hours, minutes, period] = time
+      .match(/(\d+):(\d+)\s*(AM|PM)/)
+      .slice(1);
+    let hour24 = parseInt(hours, 10);
+    if (period === "PM" && hour24 !== 12) {
+      hour24 += 12;
+    } else if (period === "AM" && hour24 === 12) {
+      hour24 = 0;
     }
+    return `${hour24.toString().padStart(2, "0")}:${minutes}`;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Booking data submitted: ", {
-      ...formData,
+
+    const bookingDetails = {
       turfName: turf.name,
-    });
-    // Add logic to integrate with backend API
+      startDate: startSlot.date,
+      startTime: startSlot.time,
+      endDate: endSlot.date,
+      endTime: endSlot.time,
+      totalPrice: calculateTotalCost(),
+    };
+
+    console.log("Booking submitted:", bookingDetails);
+    alert("Booking Successful!");
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg"
-      >
-        <h1 className="text-2xl font-bold mb-4 text-center">Book Your Turf</h1>
+      <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
+        <h1 className="text-2xl font-bold mb-4 text-center">Booking Details</h1>
 
-        {/* Display Turf Name */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
             Turf Name
@@ -63,80 +62,34 @@ const BookingForm = () => {
           <p className="text-lg">{turf.name}</p>
         </div>
 
-        {/* Time Selection */}
-        <div className="mb-4">
-          <label
-            htmlFor="startTime"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Start Time
-          </label>
-          <input
-            type="time"
-            id="startTime"
-            name="startTime"
-            value={formData.startTime}
-            onChange={handleTimeChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            step="1800" // 30 minutes step
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="endTime"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            End Time
-          </label>
-          <input
-            type="time"
-            id="endTime"
-            name="endTime"
-            value={formData.endTime}
-            onChange={handleTimeChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            step="1800" // 30 minutes step
-            required
-          />
-        </div>
-
-        {/* Calendar */}
-        <div className="mb-4">
-          <label
-            htmlFor="bookingDate"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Select Date
-          </label>
-          <input
-            type="date"
-            id="bookingDate"
-            name="bookingDate"
-            value={formData.bookingDate}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Amount Paid */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
-            Amount Paid
+            Start Time
           </label>
-          <p className="text-lg">{formData.amountPaid}</p>
+          <p className="text-lg">{`${startSlot.date} - ${startSlot.time}`}</p>
         </div>
 
-        {/* Pay Now Button */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">
+            End Time
+          </label>
+          <p className="text-lg">{`${endSlot.date} - ${endSlot.time}`}</p>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">
+            Total Amount
+          </label>
+          <p className="text-lg">₹{calculateTotalCost()}</p>
+        </div>
+
         <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
+          onClick={handleSubmit}
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
         >
           Pay Now
         </button>
-      </form>
+      </div>
     </div>
   );
 };

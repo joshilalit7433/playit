@@ -1,216 +1,181 @@
-// Login.js
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import {  toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { USER_API_END_POINT } from "../utils/constant.js";
-import { setUser } from "../redux/authSlice";
-import { useDispatch } from "react-redux";
-import { Mail, Lock } from "lucide-react"; // Importing Lucide icons
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Close from "../components/Close";
+import Menu from "../components/Menu";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice"; // Import the logout action
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles
 
-export default function Login() {
-  const initialvalues = { email: "", password: "", role: "" };
-  const [formvalues, setformvalues] = useState(initialvalues);
-  const [formerrors, setformerrors] = useState({});
-  const [submit, setsubmit] = useState(false);
-  const navigate = useNavigate();
+export default function Navbar() {
+  const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
+  const location = useLocation();
 
-  const change = (e) => {
-    const { name, value } = e.target;
-    setformvalues({ ...formvalues, [name]: value });
+  const isLoginOrSignupPage =
+    location.pathname === "/login" || location.pathname === "/signup";
+
+  const links = [
+    { id: 1, name: "Home", link: "/" },
+    { id: 2, name: "Turfs", link: "/turfs" },
+    { id: 3, name: "Contact", link: "/contact" },
+  ];
+
+  const [btn, setBtn] = useState(false);
+
+  const toggleBtn = () => {
+    setBtn(!btn);
   };
 
-  const handlesubmit = async (e) => {
-    e.preventDefault();
-    setformerrors(validate(formvalues));
-    setsubmit(true);
+  const handleLogout = () => {
+    dispatch(logout()); // Clear user data in Redux store
 
-    const formData = new FormData();
-    formData.append("email", formvalues.email);
-    formData.append("password", formvalues.password);
-    formData.append("role", formvalues.role);
-
-    try {
-      const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: false,
-      });
-
-      if (res.data.success) {
-        dispatch(setUser(res.data.user));
-        navigate("/");
-
-        // Success Toast
-        toast.success(res.data.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      } else {
-        // Error Toast for unsuccessful login
-        toast.error(res.data.message || "Login failed. Please try again.", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      }
-    } catch (error) {
-      // Error Toast for server or network errors
-      toast.error("An error occurred. Please check your credentials and try again.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (Object.keys(formerrors).length === 0 && submit) console.log(formvalues);
-  }, [formerrors]);
-
-  const validate = (values) => {
-    const errors = {};
-    const regx = /^\w+([.-]?\w+)@\w+([.-]?\w+)(\.\w{2,3})+$/i;
-
-    if (!values.email) {
-      errors.email = "Email is required";
-    } else if (!regx.test(values.email)) {
-      errors.email = "This is not a valid email format";
-    }
-
-    if (!values.password) {
-      errors.password = "Password is required";
-    } else if (values.password.length < 4) {
-      errors.password = "Password should not be less than 4 characters";
-    }
-
-    if (!values.role) {
-      errors.role = "Role Is Required";
-    }
-
-    return errors;
+    // Show toast message on logout
+    toast.success("You have successfully logged out.", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   };
 
   return (
     <>
-      <div className="flex justify-center items-center mt-[100px] lg:mt-[50px] lg:mb-[50px]">
-        <form
-          onSubmit={handlesubmit}
-          className="w-[310px] h-[400px] lg:h-[600px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
+      <div className="bg-[#31a022] flex flex-row items-center justify-between p-4 relative z-50">
+        {/* Brand Name */}
+        <div className="text-[24px] lg:text-[30px] font-bold text-white">
+          <Link to="/">Field Finder</Link>
+        </div>
+
+        {/* Desktop Links */}
+        <div className="hidden lg:flex lg:items-center lg:space-x-8 lg:justify-center lg:flex-1">
+          {links.map((link) => (
+            <Link
+              key={link.id}
+              to={link.link}
+              className="text-white hover:text-gray-300 text-lg"
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Login/Profile Section */}
+        <div className="hidden lg:flex lg:items-center relative z-50">
+          {!user ? (
+            !isLoginOrSignupPage && (
+              <Link
+                to="/login"
+                className="bg-black text-white px-4 py-2 rounded-full text-center hover:bg-gray-800 transition"
+              >
+                Login
+              </Link>
+            )
+          ) : (
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex items-center space-x-4 cursor-pointer">
+                  {/* Display user name */}
+                  <span className="text-white font-medium">
+                    Hello, {user?.fullname || "User"}
+                  </span>
+
+                  {/* Display user profile picture */}
+                  <img
+                    src={user?.userPhoto || "./images/profileImage.jpg"} // Default profile picture
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                </div>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="p-4 bg-white rounded-lg shadow-md border border-gray-300 z-50"
+              >
+                <ul className="flex flex-col space-y-2 text-gray-700">
+                  <li className="hover:bg-gray-100 py-2 px-4 rounded-md cursor-pointer">
+                    <Link to="/userprofile">Profile</Link>
+                  </li>
+                  <li
+                    className="hover:bg-gray-100 py-2 px-4 rounded-md cursor-pointer"
+                    onClick={handleLogout} // Trigger logout
+                  >
+                    Logout
+                  </li>
+                </ul>
+              </PopoverContent>
+            </Popover>
+          )}
+        </div>
+
+        {/* Mobile Toggle Button */}
+        <div className="lg:hidden flex">
+          <button
+            onClick={toggleBtn}
+            className="text-white"
+            style={{ width: "25px", height: "25px" }}
+          >
+            {btn ? <Close /> : <Menu />}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div
+          className={`lg:hidden absolute top-[60px] left-0 w-full ${
+            btn ? "block" : "hidden"
+          } bg-black text-white p-4 space-y-4 z-50`}
         >
-          <div className="text-center mb-6">
-            <p className="text-[25px] font-bold text-white">Customer Login</p>
-          </div>
-
-          {/* Email Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Email ID:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <Mail className="text-white mr-2" /> {/* Lucide Email Icon */}
-              <input
-                type="email"
-                onChange={change}
-                placeholder="Email"
-                name="email"
-                className="bg-transparent w-full text-white focus:outline-none"
-                value={formvalues.email}
-              />
-            </div>
-            <p className="text-black">{formerrors.email}</p>
-          </div>
-
-          {/* Password Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Password:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <Lock className="text-white mr-2" /> {/* Lucide Lock Icon */}
-              <input
-                type="password"
-                onChange={change}
-                placeholder="Password"
-                name="password"
-                className="bg-transparent w-full text-white focus:outline-none"
-                value={formvalues.password}
-              />
-            </div>
-            <p className="text-black">{formerrors.password}</p>
-          </div>
-
-          {/* Role Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Role:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <input
-                type="radio"
-                id="User"
-                name="role"
-                value="user"
-                onChange={change}
-              />
-              <label for="html" className="text-white text-[18px]">
-                User
-              </label>
-
-              <input
-                type="radio"
-                id="Admin"
-                name="role"
-                value="admin"
-                className="lg:ml-4"
-                onChange={change}
-              />
-              <label for="html" className="text-white text-[18px]">
-                Admin
-              </label>
-            </div>
-            <p className="text-black">{formerrors.role}</p>
-          </div>
-
-          {/* Remember Me and Forgot Password */}
-          <div className="flex justify-between text-white text-sm mb-6">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              Remember me
-            </label>
-            <Link to="/forgot-password" className="underline">
-              Forgot Password?
+          {links.map((link) => (
+            <Link
+              key={link.id}
+              to={link.link}
+              onClick={toggleBtn}
+              className="block hover:text-gray-300 text-lg"
+            >
+              {link.name}
             </Link>
-          </div>
+          ))}
 
-          {/* Submit Button */}
-          <div className="flex justify-center">
-            <button className="text-[20px] w-full py-2 bg-white text-[#31a022] rounded-lg font-bold">
-              LOGIN
-            </button>
-          </div>
-
-          {/* Don't have an account? */}
-          <div className="text-center mt-4">
-            <Link to="/signup" className="text-white underline">
-              Don't have an account?
-            </Link>
-          </div>
-        </form>
+          {!user ? (
+            !isLoginOrSignupPage && (
+              <Link
+                to="/login"
+                onClick={toggleBtn}
+                className="block bg-gray-700 text-white px-4 py-2 rounded-full text-center hover:bg-gray-800 transition"
+              >
+                Login
+              </Link>
+            )
+          ) : (
+            <div className="flex flex-col items-center space-y-2">
+              <span className="text-white">Hello, {user?.fullname}</span>
+              <img
+                src={user?.userPhoto || "./images/profileImage.jpg"}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <button
+                onClick={handleLogout} // Trigger logout
+                className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </>
   );
 }

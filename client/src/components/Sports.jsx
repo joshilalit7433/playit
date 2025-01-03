@@ -1,5 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 export default function Sports() {
+  const navigate = useNavigate();
+
+  const handleSportClick = (sport) => {
+    navigate(`/sports/${sport}`);
+  };
+
   return (
     <>
       <div className="mt-[20px] mb-[20px]">
@@ -15,39 +23,38 @@ export default function Sports() {
         </div>
 
         <div className=" grid grid-rows-2 grid-cols-2 pl-[20px] lg:grid lg:grid-rows-1 lg:grid-cols-3 lg:pl-[200px]">
-          <div className="lg:mb-[20px] ">
+          <div className="lg:mb-[20px] " onClick={() => handleSportClick("cricket")}>
             <img
               src="./images/cricket.jpeg"
-              className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl"
+              alt="cricket"
+              className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl cursor-pointer"
             ></img>
             <p className=" text-xl ml-[40px] lg:text-[25px] lg:ml-[70px]">
               CRICKET
             </p>
           </div>
 
-          <div className="lg:mb-[20px] ">
+          <div className="lg:mb-[20px] " onClick={() => handleSportClick("badminton")}>
             <img
               src="./images/badminton.jpeg"
-              className="h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl"
+              alt="badminton"
+              className="h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl cursor-pointer"
             ></img>
             <p className=" text-xl ml-[20px] lg:text-[25px] lg:ml-[50px]">
               BADMINTON
             </p>
           </div>
 
-          <div className="lg:mb-[20px] ">
+          <div className="lg:mb-[20px] " onClick={() => handleSportClick("football")}>
             <img
               src="./images/football.jpeg"
-              className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl"
+              alt="football"
+              className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl cursor-pointer"
             ></img>
             <p className=" text-xl ml-[30px] lg:text-[25px] lg:ml-[60px]">
               FOOTBALL
             </p>
           </div>
-
-
-          
-
         </div>
       </div>
     </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { RxDotFilled } from "react-icons/rx";
 
@@ -17,11 +17,11 @@ export default function Hero() {
     setCurrentIndex(newIndex);
   };
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     const isLastSlide = currentIndex === slides.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
-  };
+  }, [currentIndex, slides.length]);
 
   const goToSlide = (slideIndex) => {
     setCurrentIndex(slideIndex);
@@ -34,7 +34,7 @@ export default function Hero() {
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(timer); // Cleanup on unmount
-  }, [currentIndex]);
+  }, [nextSlide]);
 
   return (
     <div className="relative group mx-auto max-w-[90%] lg:max-w-[80%] py-8">

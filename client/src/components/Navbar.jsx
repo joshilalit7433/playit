@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Close from "./Close";
 import Menu from "./Menu";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice"; // Import the logout action
 import {
   Popover,
   PopoverTrigger,
@@ -11,6 +12,7 @@ import {
 
 export default function Navbar() {
   const { user } = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
   const location = useLocation();
 
   const isLoginOrSignupPage =
@@ -26,6 +28,10 @@ export default function Navbar() {
 
   const toggleBtn = () => {
     setBtn(!btn);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout()); // Clear user data in Redux store
   };
 
   return (
@@ -81,7 +87,10 @@ export default function Navbar() {
                 <li className="hover:bg-gray-100 py-2 px-4 rounded-md cursor-pointer">
                   <Link to="/userprofile">Profile</Link>
                 </li>
-                <li className="hover:bg-gray-100 py-2 px-4 rounded-md cursor-pointer">
+                <li
+                  className="hover:bg-gray-100 py-2 px-4 rounded-md cursor-pointer"
+                  onClick={handleLogout} // Trigger logout
+                >
                   Logout
                 </li>
               </ul>
@@ -136,6 +145,12 @@ export default function Navbar() {
               alt="Profile"
               className="w-8 h-8 rounded-full object-cover"
             />
+            <button
+              onClick={handleLogout} // Trigger logout
+              className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition"
+            >
+              Logout
+            </button>
           </div>
         )}
       </div>

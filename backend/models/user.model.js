@@ -26,12 +26,9 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["user", "admin"],
-      required: true,
+      required: true, 
     },
-    userPhoto: {
-      type: String,
-      default: "https://via.placeholder.com/150",
-    },
+    
   },
   { timestamps: true }
 );

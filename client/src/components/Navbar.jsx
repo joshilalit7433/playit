@@ -1,19 +1,18 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Close from "./Close";
 import Menu from "./Menu";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice"; // Import the logout action
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@radix-ui/react-popover";
+import {Popover,PopoverTrigger, PopoverContent,} from "@radix-ui/react-popover";
+import {  toast } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles
 
 export default function Navbar() {
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate=useNavigate();
 
   const isLoginOrSignupPage =
     location.pathname === "/login" || location.pathname === "/signup";
@@ -32,6 +31,19 @@ export default function Navbar() {
 
   const handleLogout = () => {
     dispatch(logout()); // Clear user data in Redux store
+    navigate("/");
+     // Show toast message
+     toast.success("You have successfully Logged Out.", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+
   };
 
   return (

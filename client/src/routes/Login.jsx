@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { USER_API_END_POINT } from "../utils/constant.js";
 import { setUser } from "../redux/authSlice";
@@ -89,7 +89,7 @@ export default function Login() {
 
   const validate = (values) => {
     const errors = {};
-    const regx = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/i;
+    const regx = /^\w+([.-]?\w+)@\w+([.-]?\w+)(\.\w{2,3})+$/i;
 
     if (!values.email) {
       errors.email = "Email is required";
@@ -214,4 +214,3 @@ export default function Login() {
     </>
   );
 }
-

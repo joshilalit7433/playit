@@ -4,9 +4,9 @@ import { RxDotFilled } from "react-icons/rx";
 
 export default function Hero() {
   const slides = [
-    { url: "./images/slide_1.png" },
-    { url: "./images/slide_2.png" },
-    { url: "./images/slide_3.png" },
+    { url: "./images/slide_1.jpg" },
+    { url: "./images/slide_2.jpg" },
+    { url: "./images/slide_3.jpg" },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -37,11 +37,11 @@ export default function Hero() {
   }, [currentIndex]);
 
   return (
-    <div className="w-full h-[500px] md:h-[600px] lg:h-[780px] max-w-[90%] lg:max-w-[80%] mx-auto py-8 px-4 relative group">
+    <div className="relative group mx-auto max-w-[90%] lg:max-w-[80%] py-8">
       {/* Slide */}
       <div
         style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
-        className="w-full h-full rounded-xl bg-center bg-cover duration-500"
+        className="w-full h-0 pb-[56.25%] lg:pb-[56.25%] relative bg-center bg-cover rounded-xl duration-500"
       ></div>
       {/* Left Arrow */}
       <div

@@ -14,7 +14,7 @@ import CricketTurfPage from "./routes/CricketTurfPage";
 import BadmintonTurfPage from "./routes/BadmintonTurfPage";
 import FootballTurfPage from "./routes/FootballTurfPage";
 import Sports from "./components/Sports";
-
+import Subscription from "./routes/Subscription";
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
         <Route path="/sports/cricket" element={<CricketTurfPage />} />
         <Route path="/sports/badminton" element={<BadmintonTurfPage />} />
         <Route path="/sports/football" element={<FootballTurfPage />} />
-
+        <Route path="/subscription" element={<Subscription />} />
       </Routes>
     </BrowserRouter>
   );

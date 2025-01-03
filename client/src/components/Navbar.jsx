@@ -4,15 +4,19 @@ import Close from "./Close";
 import Menu from "./Menu";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice"; // Import the logout action
-import {Popover,PopoverTrigger, PopoverContent,} from "@radix-ui/react-popover";
-import {  toast } from "react-toastify"; // Import Toastify
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
+import { toast } from "react-toastify"; // Import Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify styles
 
 export default function Navbar() {
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const isLoginOrSignupPage =
     location.pathname === "/login" || location.pathname === "/signup";
@@ -32,8 +36,8 @@ export default function Navbar() {
   const handleLogout = () => {
     dispatch(logout()); // Clear user data in Redux store
     navigate("/");
-     // Show toast message
-     toast.success("You have successfully Logged Out.", {
+    // Show toast message
+    toast.success("You have successfully Logged Out.", {
       position: "top-center",
       autoClose: 3000,
       hideProgressBar: false,
@@ -43,14 +47,13 @@ export default function Navbar() {
       progress: undefined,
       theme: "dark",
     });
-
   };
 
   return (
     <div className="bg-[#31a022] flex flex-row items-center justify-between p-4 relative z-50">
       {/* Brand Name */}
       <div className="text-[24px] lg:text-[30px] font-bold text-white">
-        <Link to="/">Field Finder</Link>
+        <Link to="/">PLAYit</Link>
       </div>
 
       {/* Desktop Links */}
@@ -64,6 +67,16 @@ export default function Navbar() {
             {link.name}
           </Link>
         ))}
+      </div>
+
+      {/* Get PLAYit PLUS Button */}
+      <div className="hidden lg:flex lg:items-center relative z-50">
+        <Link
+          to="/subscription"
+          className="bg-blue-300 hover:bg-blue-400 text-black px-4 py-2 rounded-full font-bold text-center transition mr-4"
+        >
+          GET PLAYit PLUS
+        </Link>
       </div>
 
       {/* Login/Profile Section */}
@@ -138,6 +151,14 @@ export default function Navbar() {
             {link.name}
           </Link>
         ))}
+
+        <Link
+          to="/subscription"
+          onClick={toggleBtn}
+          className="block bg-blue-300 text-black px-4 py-2 rounded-full text-center hover:bg-blue-400 font-bold"
+        >
+          GET PLAYit PLUS
+        </Link>
 
         {!user ? (
           !isLoginOrSignupPage && (

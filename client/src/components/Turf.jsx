@@ -39,8 +39,10 @@ export default function Turf({ filters }) {
 
   return (
     <div>
-      <h1 className="lg:ml-[250px] lg:text-[25px] lg:mt-4 lg:mb-4">Turfs</h1>
-      <div className="ml-6  lg:ml-[220px] grid grid-cols-2 gap-4 sm:grid-cols-2 sm:justify-center lg:grid-rows-3 lg:grid-cols-3">
+      <h1 className="lg:ml-[250px] lg:text-[25px] lg:mt-4 lg:mb-4 justify-center text-center">
+        Turfs
+      </h1>
+      <div className="ml-6 lg:ml-[220px] grid grid-cols-2 gap-4 sm:grid-cols-2 sm:justify-center lg:grid-rows-3 lg:grid-cols-3">
         {filteredTurfs.map((turf) => (
           <div
             key={turf._id}
@@ -57,7 +59,7 @@ export default function Turf({ filters }) {
                 }}
               />
             </div>
-            <div className="pl-2 pt-1 lg:pl-4 lg:pt-2">
+            <div className="pl-2 pt-1 lg:pl-4 lg:pt-2 text-center">
               <p className="text-[14px] lg:text-[20px] capitalize font-bold">
                 {turf.name}
               </p>

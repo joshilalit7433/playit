@@ -10,6 +10,8 @@ export default function Hero() {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   const prevSlide = () => {
     const isFirstSlide = currentIndex === 0;
@@ -27,17 +29,47 @@ export default function Hero() {
     setCurrentIndex(slideIndex);
   };
 
-  // Automatic Sliding
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide();
-    }, 5000); // Change slide every 5 seconds
+    }, 5000);
 
-    return () => clearInterval(timer); // Cleanup on unmount
+    return () => clearInterval(timer);
   }, [nextSlide]);
 
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const swipeDistance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (swipeDistance > minSwipeDistance) {
+      nextSlide();
+    }
+
+    if (swipeDistance < -minSwipeDistance) {
+      prevSlide();
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   return (
-    <div className="relative group mx-auto max-w-[90%] lg:max-w-[80%] py-8">
+    <div
+      className="relative group mx-auto max-w-[90%] lg:max-w-[80%] py-8"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Slide */}
       <div
         style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
@@ -45,14 +77,14 @@ export default function Hero() {
       ></div>
       {/* Left Arrow */}
       <div
-        className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] left-5 text-xl md:text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer"
+        className="hidden group-hover:block hidden-mobile absolute top-[50%] -translate-x-0 translate-y-[-50%] left-5 text-xl md:text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer"
         onClick={prevSlide}
       >
         <BsChevronCompactLeft size={30} />
       </div>
       {/* Right Arrow */}
       <div
-        className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-xl md:text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer"
+        className="hidden group-hover:block hidden-mobile absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-xl md:text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer"
         onClick={nextSlide}
       >
         <BsChevronCompactRight size={30} />

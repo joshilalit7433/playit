@@ -53,7 +53,9 @@ export default function Navbar() {
     <div className="bg-[#31a022] flex flex-row items-center justify-between p-4 relative z-50">
       {/* Brand Name */}
       <div className="text-[24px] lg:text-[30px] font-bold text-white">
-        <Link to="/">PLAYit</Link>
+        <Link to="/">
+          <img src="images/play-it.png" alt="Logo" className="lg:h-10" />
+        </Link>
       </div>
 
       {/* Desktop Links */}

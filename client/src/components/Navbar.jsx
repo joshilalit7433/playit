@@ -54,7 +54,11 @@ export default function Navbar() {
       {/* Brand Name */}
       <div className="text-[24px] lg:text-[30px] font-bold text-white">
         <Link to="/">
-          <img src="images/play-it.png" alt="Logo" className="lg:h-10" />
+          <img
+            src="images/play-it.png"
+            alt="Logo"
+            className="h-6 sm:h-8 lg:h-10 "
+          />
         </Link>
       </div>
 

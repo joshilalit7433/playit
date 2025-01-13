@@ -23,14 +23,17 @@ const turfSchema = new mongoose.Schema(
       type: Number,
     },
 
-    sports_type:{
-      type:String,
-
+    sports_type: {
+      type: String,
     },
 
     ratings: {
       type: Number,
       default: 0,
+    },
+
+    linkes: {
+      type: String, // New link field
     },
   },
   { timestamps: true }

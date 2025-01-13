@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -162,6 +162,14 @@ const SingleTurfDetail = () => {
       <p className="text-lg text-gray-700 mb-2">
         <strong>Location:</strong> {turf.location}
       </p>
+      <p>
+        <Link to={turf.linkes} target="_blank" rel="noopener noreferrer">
+          <button className="bg-white text-black border border-black px-2 py-1 rounded-lg shadow-md hover:bg-blue-50 transition duration-300 mb-2">
+            View on Maps
+          </button>
+        </Link>
+      </p>
+
       <p className="text-lg text-gray-700 mb-2">
         <strong>Price:</strong> ₹{turf.price} per hour
       </p>

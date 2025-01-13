@@ -8,6 +8,7 @@ import userRoute from "./routes/user.route.js";
 import turfRoute from "./routes/turf.route.js";
 import subcriptionRoute from "./routes/subcription.route.js";
 import bookingRoute from "./routes/booking.route.js";
+import paymentRoute from "./routes/payment.routes.js";
 
 dotenv.config({});
 const app = express();
@@ -43,6 +44,13 @@ app.use("/api/v1/subcription", subcriptionRoute);
 app.use("/api/v1/booking", bookingRoute);
 
 // http://localhost:8000/api/v1/booking
+
+app.use("/api/v1/payment",paymentRoute);
+
+// http://localhost:8000/api/v1/postPayment
+
+
+
 
 app.listen(PORT, () => {
   connectdb();

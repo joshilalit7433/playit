@@ -160,8 +160,9 @@ const SingleTurfDetail = () => {
         className="w-full h-64 object-cover rounded-lg mb-4"
       />
       <p className="text-lg text-gray-700 mb-2">
-        <strong>Location:</strong> {turf.location}
+        <strong>Address:</strong> {turf.address}
       </p>
+
       <p>
         <Link to={turf.linkes} target="_blank" rel="noopener noreferrer">
           <button className="bg-white text-black border border-black px-2 py-1 rounded-lg shadow-md hover:bg-blue-50 transition duration-300 mb-2">

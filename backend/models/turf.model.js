@@ -11,6 +11,10 @@ const turfSchema = new mongoose.Schema(
       type: String,
     },
 
+    address: {
+      type: String, // New address field
+    },
+
     description: {
       type: String,
     },
@@ -33,7 +37,7 @@ const turfSchema = new mongoose.Schema(
     },
 
     linkes: {
-      type: String, // New link field
+      type: String, // Link field
     },
   },
   { timestamps: true }

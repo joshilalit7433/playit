@@ -11,6 +11,7 @@ export const postTurf = async (req, res) => {
       sports_type,
       ratings,
       linkes,
+      address,
     } = req.body;
 
     if (
@@ -21,7 +22,8 @@ export const postTurf = async (req, res) => {
       !price ||
       !sports_type ||
       !ratings ||
-      !linkes
+      !linkes ||
+      !address
     ) {
       return res.status(400).json({
         message: "Something is missing.",
@@ -37,6 +39,7 @@ export const postTurf = async (req, res) => {
       sports_type,
       ratings,
       linkes,
+      address,
     });
     return res.status(201).json({
       message: "New turf created successfully.",

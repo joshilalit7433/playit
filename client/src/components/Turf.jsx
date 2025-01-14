@@ -7,6 +7,11 @@ export default function Turf({ filters }) {
   const [turfs, setTurfs] = useState([]);
   const navigate = useNavigate();
 
+  // Function to normalize location (strip "East", "West", etc.)
+  const normalizeLocation = (location) => {
+    return location.split(" ")[0].toLowerCase(); // Extract base location
+  };
+
   useEffect(() => {
     const fetchTurfs = async () => {
       try {
@@ -27,10 +32,11 @@ export default function Turf({ filters }) {
     navigate(`/turfs/${turf._id}`, { state: { turf } });
   };
 
-  // Filter turfs based on the filters
+  // Filter turfs based on the filters with normalized locations
   const filteredTurfs = turfs.filter((turf) => {
     const matchesLocation =
-      !filters.Location || turf.location === filters.Location;
+      !filters.Location ||
+      normalizeLocation(turf.location) === normalizeLocation(filters.Location);
     const matchesSport = !filters.Sports || turf.sports_type === filters.Sports;
     const matchesPrice =
       !filters.Price || turf.price === parseInt(filters.Price, 10); // Convert filters.Price to number

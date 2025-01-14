@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const filterData = [
   {
     filterType: "Location",
-    options: ["Borivali", "Bandra", "Vasai", "Bhayandar", "Andheri", "Malad"],
+    options: ["Borivali", "Bandra", "Vasai", "Bhayandar", "Andheri", "Malad","Kandivali","Mira Road","Goregaon"],
   },
   {
     filterType: "Sports",

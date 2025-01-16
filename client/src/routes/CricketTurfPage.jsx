@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import FilterTurfs from "../components/FilterTurfs.jsx";
+import SportsListFilter from "../components/SportsListFilter.jsx";
 import { TURF_API_END_POINT } from "../utils/constant.js";
 
 const CricketTurfPage = () => {
@@ -9,6 +9,11 @@ const CricketTurfPage = () => {
   const [turfs, setTurfs] = useState([]);
   const [filters, setFilters] = useState({ Location: "", Sports: sport, Price: "" });
   const navigate = useNavigate();
+
+  // Function to normalize location (strip "East", "West", etc.)
+  const normalizeLocation = (location) => {
+    return location.split(" ")[0].toLowerCase(); // Extract base location
+  };
 
   useEffect(() => {
     const fetchTurfs = async () => {
@@ -36,7 +41,7 @@ const CricketTurfPage = () => {
   };
 
   const filteredTurfs = turfs.filter((turf) => {
-    const matchesLocation = !filters.Location || turf.location === filters.Location;
+    const matchesLocation = !filters.Location || normalizeLocation(turf.location) === normalizeLocation(filters.Location);
     const matchesPrice = !filters.Price || turf.price === parseInt(filters.Price, 10);
     return matchesLocation && matchesPrice; // Sports filter is redundant since the turfs are already filtered for cricket
   });
@@ -45,7 +50,7 @@ const CricketTurfPage = () => {
     <div className="lg:flex lg:flex-row">
       {/* Filter Component */}
       <div className="lg:w-[200px]">
-        <FilterTurfs onFilterChange={handleFilterChange} />
+        <SportsListFilter onFilterChange={handleFilterChange} />
       </div>
 
       {/* Turfs Display */}

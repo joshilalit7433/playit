@@ -1,6 +1,5 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { loadStripe } from '@stripe/stripe-js';
 
 const BookingForm = () => {
   const location = useLocation();
@@ -37,7 +36,6 @@ const BookingForm = () => {
     console.log("Booking submitted:", { turf, startSlot, endSlot });
     alert("Booking Successful!");
 
-    const stripe = await loadStripe("pk_test_51QgjNe09HGOXkg8viWL8pjd40ZUvHm9gr8EzgaMDDUy1Zy8F6GK4OYncFiMWIvs77rTRUKuspM8YF4CPYTPJllCJ00MSl5YBo1");
   };
 
   return (

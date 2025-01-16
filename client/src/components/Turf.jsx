@@ -34,9 +34,7 @@ export default function Turf({ filters }) {
 
   // Filter turfs based on the filters with normalized locations
   const filteredTurfs = turfs.filter((turf) => {
-    const matchesLocation =
-      !filters.Location ||
-      normalizeLocation(turf.location) === normalizeLocation(filters.Location);
+    const matchesLocation =!filters.Location || normalizeLocation(turf.location) === normalizeLocation(filters.Location);
     const matchesSport = !filters.Sports || turf.sports_type === filters.Sports;
     const matchesPrice =
       !filters.Price || turf.price === parseInt(filters.Price, 10); // Convert filters.Price to number

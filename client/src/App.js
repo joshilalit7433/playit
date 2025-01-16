@@ -35,6 +35,7 @@ function App() {
         <Route path="/sports/badminton" element={<BadmintonTurfPage />} />
         <Route path="/sports/football" element={<FootballTurfPage />} />
         <Route path="/subscription" element={<Subscription />} />
+        
       </Routes>
     </BrowserRouter>
   );

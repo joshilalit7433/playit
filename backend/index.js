@@ -9,6 +9,7 @@ import turfRoute from "./routes/turf.route.js";
 import subcriptionRoute from "./routes/subcription.route.js";
 import bookingRoute from "./routes/booking.route.js";
 import paymentRoute from "./routes/payment.routes.js";
+import Stripe from 'stripe';
 
 dotenv.config({});
 const app = express();
@@ -48,9 +49,6 @@ app.use("/api/v1/booking", bookingRoute);
 app.use("/api/v1/payment",paymentRoute);
 
 // http://localhost:8000/api/v1/postPayment
-
-
-
 
 app.listen(PORT, () => {
   connectdb();

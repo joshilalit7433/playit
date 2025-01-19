@@ -51,3 +51,15 @@ export const createBooking = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const displayUserBookings = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const bookings = await Booking.find({ userId }); // Replace with your DB query
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+ 
+};

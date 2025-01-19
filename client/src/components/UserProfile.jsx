@@ -1,8 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const UserProfile = () => {
   const { user } = useSelector((store) => store.auth);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/v1/booking/get-user-bookings/${user?.id}`);
+        setBookings(response.data.bookings || []);
+      } catch (err) {
+        console.error("Error fetching bookings:", err.message);
+        setError("Failed to fetch bookings.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchBookings();
+    }
+  }, [user]);
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -37,9 +59,37 @@ const UserProfile = () => {
               <p className="text-sm text-gray-500">Role</p>
               <p className="font-medium text-gray-800 capitalize">{user?.role || "Unknown"}</p>
             </div>
-            {/* Joined Date */}
-           
           </div>
+        </div>
+
+        {/* Bookings Section */}
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Bookings</h2>
+          {loading ? (
+            <p className="text-sm text-gray-500">Loading bookings...</p>
+          ) : error ? (
+            <p className="text-sm text-red-500">{error}</p>
+          ) : bookings.length > 0 ? (
+            <ul className="space-y-4">
+              {bookings.map((booking) => (
+                <li
+                  key={booking._id}
+                  className="border p-4 rounded-lg shadow-sm bg-gray-50"
+                >
+                  <p className="text-sm text-gray-500">Turf Name:</p>
+                  <p className="font-medium text-gray-800">{booking.turfName}</p>
+                  <p className="text-sm text-gray-500 mt-2">Date:</p>
+                  <p className="font-medium text-gray-800">{booking.date}</p>
+                  <p className="text-sm text-gray-500 mt-2">Time Slot:</p>
+                  <p className="font-medium text-gray-800">{booking.timeSlot}</p>
+                  <p className="text-sm text-gray-500 mt-2">Amount Paid:</p>
+                  <p className="font-medium text-gray-800">₹{booking.amount}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-500">No bookings found.</p>
+          )}
         </div>
 
         {/* Action Buttons */}

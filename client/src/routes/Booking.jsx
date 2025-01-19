@@ -1,10 +1,10 @@
 import React from "react";
-import { useLocation,useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BookingForm = () => {
   const location = useLocation();
   const { turf, startSlot, endSlot } = location.state;
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const calculateTotalCost = () => {
     const startTimeParts = startSlot.time.split(" ");
@@ -34,13 +34,12 @@ const BookingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Booking submitted:", { turf, startSlot, endSlot });
-    navigate("/paymentpage")
-   
-    
-    
-    
+    const totalAmount = calculateTotalCost();
 
+    // Navigate to PaymentPage with total amount
+    navigate("/paymentpage", {
+      state: { amount: totalAmount, currency: "usd", userId: "12345" },
+    });
   };
 
   return (

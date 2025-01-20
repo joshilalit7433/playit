@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux"; // Import useSelector to access Redux state
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import PaymentForm from "./CheckOut";
@@ -7,15 +8,26 @@ const PaymentPage = () => {
   const [clientSecret, setClientSecret] = useState(""); // To store the client secret
   const [error, setError] = useState(""); // To store any error message
   const location = useLocation();
-  const { amount, userId } = location.state || {}; // Retrieve amount and userId from state
+  const { amount } = location.state || {}; // Retrieve amount from location.state
+
+  const user = useSelector((state) => state.auth.user); // Get user data from Redux
+  const userId = user?._id; // Extract userId from user object in Redux
 
   const createPaymentIntent = async () => {
+    if (!userId) {
+      setError("User is not logged in.");
+      return;
+    }
+
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/payment/postPayment", {
-        amount: amount,
-        currency: "inr",
-        userId: userId, // Include userId in the request
-      });
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/payment/post-payment",
+        {
+          amount: amount,
+          currency: "inr",
+          userId: userId, // Include userId from Redux
+        }
+      );
 
       if (response.data.clientSecret) {
         setClientSecret(response.data.clientSecret);

@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { useSelector } from "react-redux"; // Import useSelector
+import axios from "axios";
 
-const PaymentForm = ({ clientSecret }) => {
+const PaymentForm = ({ clientSecret, amount }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [paymentStatus, setPaymentStatus] = useState("");
+
+  // Access userId from Redux store
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?._id; // Retrieve userId from the user object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +28,21 @@ const PaymentForm = ({ clientSecret }) => {
       setPaymentStatus("Payment failed! Try again.");
     } else if (paymentIntent.status === "succeeded") {
       console.log("Payment succeeded!");
-      setPaymentStatus("Payment succeeded!");
+      setPaymentStatus(`Payment succeeded! Payment ID: ${paymentIntent.id} | User ID: ${userId}`);
+
+      // Send payment details to the backend
+      try {
+        await axios.post("http://localhost:8000/api/v1/payment/savePayment", {
+          paymentIntentId: paymentIntent.id,
+          amount: amount,
+          currency: "inr",
+          status: paymentIntent.status,
+          userId: userId, // Include userId from Redux store
+        });
+        console.log("Payment details saved successfully.");
+      } catch (saveError) {
+        console.error("Error saving payment details:", saveError.message);
+      }
     }
   };
 
@@ -32,7 +52,7 @@ const PaymentForm = ({ clientSecret }) => {
         color: "#32325d",
         fontFamily: "'Inter', sans-serif",
         fontSize: "16px",
-        '::placeholder': {
+        "::placeholder": {
           color: "#a0aec0",
         },
       },
@@ -62,7 +82,7 @@ const PaymentForm = ({ clientSecret }) => {
           disabled={!stripe}
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
         >
-          Pay
+          Pay ₹{amount}
         </button>
         {paymentStatus && (
           <p className="text-center text-sm mt-4 text-gray-700">{paymentStatus}</p>

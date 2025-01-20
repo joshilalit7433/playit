@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import PaymentForm from "../components/CheckOut";
+import PaymentForm from "./CheckOut";
 
 const PaymentPage = () => {
   const [clientSecret, setClientSecret] = useState(""); // To store the client secret
   const [error, setError] = useState(""); // To store any error message
   const location = useLocation();
-  const { amount, userId } = location.state || {}; // Destructure from state
+  const { amount, userId } = location.state || {}; // Retrieve amount and userId from state
 
   const createPaymentIntent = async () => {
     try {
       const response = await axios.post("http://localhost:8000/api/v1/payment/postPayment", {
-        amount: amount , // Convert amount to cents
-        currency:"inr",
-        userId,
+        amount: amount,
+        currency: "inr",
+        userId: userId, // Include userId in the request
       });
 
       if (response.data.clientSecret) {
@@ -33,9 +33,7 @@ const PaymentPage = () => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4 text-center">Payment Page</h1>
 
-      <p className="mb-4 text-lg text-gray-700">
-        Total Amount: ₹{amount}
-      </p>
+      <p className="mb-4 text-lg text-gray-700">Total Amount: ₹{amount}</p>
 
       <button
         onClick={createPaymentIntent}
@@ -45,10 +43,11 @@ const PaymentPage = () => {
       </button>
 
       {clientSecret && (
-        <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded">
-          <h2 className="text-lg font-semibold mb-2">Client Secret</h2>
-          <p className="text-sm text-gray-800">{clientSecret}</p>
-        </div>
+        <PaymentForm
+          clientSecret={clientSecret}
+          amount={amount}
+          userId={userId} // Pass userId as a prop
+        />
       )}
 
       {error && (
@@ -56,8 +55,6 @@ const PaymentPage = () => {
           <p>{error}</p>
         </div>
       )}
-
-      {clientSecret && <PaymentForm clientSecret={clientSecret} />}
     </div>
   );
 };

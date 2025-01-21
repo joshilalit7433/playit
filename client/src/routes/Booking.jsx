@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux"; // Import useSelector to access Redux state
+
 
 const BookingForm = () => {
   const location = useLocation();
   const { turf, startSlot, endSlot } = location.state;
+
+  const user = useSelector((state) => state.auth.user); // Get user data from Redux
+    const userId = user?._id; // Extract userId from user object in Redux
+  
+
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const calculateTotalCost = () => {
@@ -32,14 +41,34 @@ const BookingForm = () => {
     return totalCost.toFixed(2); // Keep two decimal places for clarity
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handlePayNow = async () => {
     const totalAmount = calculateTotalCost();
 
-    // Navigate to PaymentPage with total amount
-    navigate("/paymentpage", {
-      state: { amount: totalAmount, currency: "usd", userId: "12345" },
-    });
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/payment/post-payment",
+        {
+          amount: totalAmount,
+          currency: "inr",
+          userId:userId , // Replace with actual userId if available
+        }
+      );
+
+      if (response.data.clientSecret) {
+        // Navigate to PaymentForm with clientSecret and amount
+        navigate("/checkout", {
+          state: {
+            clientSecret: response.data.clientSecret,
+            amount: totalAmount,
+          },
+        });
+      } else {
+        setError("Failed to fetch client secret.");
+      }
+    } catch (error) {
+      console.error("Error creating payment intent:", error.message);
+      setError("An error occurred while creating the payment intent.");
+    }
   };
 
   return (
@@ -75,8 +104,14 @@ const BookingForm = () => {
           <p className="text-lg">₹{calculateTotalCost()}</p>
         </div>
 
+        {error && (
+          <div className="mb-4 text-red-500">
+            <p>{error}</p>
+          </div>
+        )}
+
         <button
-          onClick={handleSubmit}
+          onClick={handlePayNow}
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
         >
           Pay Now

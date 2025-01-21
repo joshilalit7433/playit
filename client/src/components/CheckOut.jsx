@@ -1,16 +1,14 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { useSelector } from "react-redux"; // Import useSelector
-import axios from "axios";
 
-const PaymentForm = ({ clientSecret, amount }) => {
+const PaymentForm = () => {
+  const location = useLocation();
+  const { clientSecret, amount } = location.state; // Get clientSecret and amount from state
+
   const stripe = useStripe();
   const elements = useElements();
   const [paymentStatus, setPaymentStatus] = useState("");
-
-  // Access userId from Redux store
-  const { user } = useSelector((state) => state.auth);
-  const userId = user?._id; // Retrieve userId from the user object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,24 +28,7 @@ const PaymentForm = ({ clientSecret, amount }) => {
       console.error("Payment failed:", error.message);
       setPaymentStatus("Payment failed! Try again.");
     } else if (paymentIntent.status === "succeeded") {
-      console.log("Payment succeeded!");
-      setPaymentStatus(
-        `Payment succeeded! Payment ID: ${paymentIntent.id} | User ID: ${userId}`
-      );
-
-      // Send payment details to the backend
-      // try {
-      //   await axios.post("http://localhost:8000/api/v1/payment/savePayment", {
-      //     paymentIntentId: paymentIntent.id,
-      //     amount: amount,
-      //     currency: "inr",
-      //     status: paymentIntent.status,
-      //     userId: userId, // Include userId from Redux store
-      //   });
-      //   console.log("Payment details saved successfully.");
-      // } catch (saveError) {
-      //   console.error("Error saving payment details:", saveError.message);
-      // }
+      setPaymentStatus(`Payment succeeded! Payment ID: ${paymentIntent.id}`);
     }
   };
 
@@ -74,7 +55,7 @@ const PaymentForm = ({ clientSecret, amount }) => {
         className="bg-white shadow-md rounded-lg p-6 w-full max-w-md"
       >
         <h2 className="text-2xl font-semibold mb-4 text-center">
-          Payment Form
+          Complete Your Payment
         </h2>
         <div className="mb-4">
           <label
@@ -84,11 +65,7 @@ const PaymentForm = ({ clientSecret, amount }) => {
             Card Details
           </label>
           <div className="border border-gray-300 rounded-lg p-3 bg-gray-50">
-            <CardElement
-              id="card-element"
-              options={cardElementOptions}
-              className="w-full"
-            />
+            <CardElement id="card-element" options={cardElementOptions} />
           </div>
         </div>
         <button

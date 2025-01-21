@@ -3,7 +3,17 @@ import React, { useState } from "react";
 const filterData = [
   {
     filterType: "Location",
-    options: ["Borivali", "Bandra", "Vasai", "Bhayandar", "Andheri", "Malad","Kandivali","Mira Road","Goregaon"],
+    options: [
+      "Borivali",
+      "Bandra",
+      "Vasai",
+      "Bhayandar",
+      "Andheri",
+      "Malad",
+      "Kandivali",
+      "Mira Road",
+      "Goregaon",
+    ],
   },
   {
     filterType: "Sports",
@@ -11,7 +21,7 @@ const filterData = [
   },
   {
     filterType: "Price",
-    options: ["600", "700", "800", "900", "1000", "1200"],
+    options: ["500-1000", "1000-1500"], // Price ranges updated
   },
 ];
 

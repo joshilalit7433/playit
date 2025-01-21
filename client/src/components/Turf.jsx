@@ -32,12 +32,20 @@ export default function Turf({ filters }) {
     navigate(`/turfs/${turf._id}`, { state: { turf } });
   };
 
+  // Function to check if the turf price falls within the selected range
+  const isPriceInRange = (price, range) => {
+    if (!range) return true; // No filter applied
+    const [min, max] = range.split("-").map(Number); // Split range into min and max values
+    return price >= min && price <= max;
+  };
+
   // Filter turfs based on the filters with normalized locations
   const filteredTurfs = turfs.filter((turf) => {
-    const matchesLocation =!filters.Location || normalizeLocation(turf.location) === normalizeLocation(filters.Location);
+    const matchesLocation =
+      !filters.Location ||
+      normalizeLocation(turf.location) === normalizeLocation(filters.Location);
     const matchesSport = !filters.Sports || turf.sports_type === filters.Sports;
-    const matchesPrice =
-      !filters.Price || turf.price === parseInt(filters.Price, 10); // Convert filters.Price to number
+    const matchesPrice = isPriceInRange(turf.price, filters.Price); // Check if price is in the selected range
     return matchesLocation && matchesSport && matchesPrice;
   });
 

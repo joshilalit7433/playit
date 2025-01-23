@@ -16,7 +16,6 @@ import FootballTurfPage from "./routes/FootballTurfPage";
 import Sports from "./components/Sports";
 import Subscription from "./routes/Subscription";
 import CheckOut from "./components/CheckOut"
-// import PaymentPage from "./components/PaymentPage";
 
 function App() {
   return (
@@ -38,7 +37,6 @@ function App() {
         <Route path="/sports/football" element={<FootballTurfPage />} />
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/checkout" element={<CheckOut />} />
-        {/* <Route path="/paymentpage" element={<PaymentPage />} /> */}
 
         
       </Routes>

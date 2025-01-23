@@ -8,7 +8,7 @@ const filterData = [
  
   {
     filterType: "Price",
-    options: ["600", "700", "800", "900", "1000", "1200"],
+    options: ["500-1000", "1000-1500"],
   },
 ];
 

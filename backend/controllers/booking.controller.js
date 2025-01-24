@@ -86,29 +86,22 @@ export const displayUserBookings = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Fetch bookings for the user, including turf and user details
+    // Fetch bookings for the user, including turf details
     const bookings = await Booking.find({ userId })
       .populate({
         path: "turfId", // Populate turf details
         select: "name location price images", // Include only necessary fields
       })
-      .populate({
-        path: "userId", // Populate user details
-        select: "fullname email", // Include only necessary fields
-      })
-      .sort({ bookingDate: -1 }); // Sort by date (most recent first)
+      .sort({ bookingDate: -1 }); // Sort by booking date, most recent first
 
-    // Check if no bookings found
     if (!bookings || bookings.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No bookings found for this user." });
+      return res.status(404).json({ message: "No bookings found for this user." });
     }
 
-    // Respond with the bookings
     return res.status(200).json({ bookings });
   } catch (error) {
     console.error("Error fetching bookings:", error);
-    return res.status(500).json({ error: "Failed to fetch bookings" });
+    return res.status(500).json({ message: "Failed to fetch bookings." });
   }
 };
+

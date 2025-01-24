@@ -5,14 +5,14 @@ import { useSelector } from "react-redux"; // Import useSelector to access Redux
 
 const BookingForm = () => {
   const location = useLocation();
-  const { turf, startSlot, endSlot } = location.state;
-
+  const { turf, startSlot, endSlot } = location.state; // Retrieve turf and slot details
   const user = useSelector((state) => state.auth.user); // Get user data from Redux
-  const userId = user?._id; // Extract userId from user object in Redux
+  const userId = user?._id; // Extract userId from Redux
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // Error state
   const navigate = useNavigate();
 
+  // Function to calculate total cost based on duration
   const calculateTotalCost = () => {
     const startTimeParts = startSlot.time.split(" ");
     const endTimeParts = endSlot.time.split(" ");
@@ -39,21 +39,23 @@ const BookingForm = () => {
     return totalCost.toFixed(2); // Keep two decimal places for clarity
   };
 
+  // Handle Pay Now functionality
   const handlePayNow = async () => {
     const totalAmount = calculateTotalCost();
 
     try {
+      // Create payment intent on the backend
       const response = await axios.post(
         "http://localhost:8000/api/v1/payment/post-payment",
         {
           amount: totalAmount,
           currency: "inr",
-          userId: userId, // Replace with actual userId if available
+          userId: userId,
         }
       );
 
       if (response.data.clientSecret) {
-        // Navigate to PaymentForm with clientSecret and amount
+        // Navigate to PaymentForm with clientSecret and booking details
         navigate("/checkout", {
           state: {
             clientSecret: response.data.clientSecret,
@@ -64,6 +66,9 @@ const BookingForm = () => {
               bookingDate: startSlot.date,
               startTime: startSlot.time,
               endTime: endSlot.time,
+              status: "pending", // Default booking status
+              amountPaid: totalAmount,
+              paymentStatus: "unpaid", // Initial payment status
             },
           },
         });

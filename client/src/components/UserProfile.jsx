@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const UserProfile = () => {
   const { user } = useSelector((store) => store.auth);
@@ -76,9 +77,11 @@ const UserProfile = () => {
 
         {/*Show Bookings Button */}
         <div>
+          <Link to="/displaybookings">
           <button className="bg-black text-white rounded-xl p-2">
             Show Bookings
           </button>
+          </Link>
         </div>
         {/* Action Buttons */}
         <div className="mt-6 flex justify-center gap-4">

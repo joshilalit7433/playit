@@ -7,12 +7,42 @@ export const createBooking = async (req, res) => {
     const {
       turfId,
       userId,
+      paymentId,
       bookingDate,
       startTime,
       endTime,
+      status,
       amountPaid,
-      paymentDetails,
+      paymentStatus,
     } = req.body;
+
+    // Check if any required field is missing
+    if (
+      !turfId ||
+      !userId ||
+      !paymentId ||
+      !bookingDate ||
+      !startTime ||
+      !endTime ||
+      !status ||
+      !amountPaid ||
+      !paymentStatus
+    ) {
+      return res.status(400).json({
+        message: "Missing required fields",
+        required: {
+          turfId,
+          userId,
+          paymentId,
+          bookingDate,
+          startTime,
+          endTime,
+          status,
+          amountPaid,
+          paymentStatus,
+        },
+      });
+    }
 
     // Validation: Check if Turf exists
     const turfExists = await Turf.findById(turfId);

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import axios from "axios";
 
 const PaymentForm = () => {
   const location = useLocation();
-  const { clientSecret, amount } = location.state; // Get clientSecret and amount from state
+  const navigate = useNavigate();
+  const { clientSecret, amount, bookingDetails } = location.state; // Include bookingDetails in state
 
   const stripe = useStripe();
   const elements = useElements();
@@ -29,6 +31,39 @@ const PaymentForm = () => {
       setPaymentStatus("Payment failed! Try again.");
     } else if (paymentIntent.status === "succeeded") {
       setPaymentStatus(`Payment succeeded! Payment ID: ${paymentIntent.id}`);
+
+      // Trigger create booking API
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/v1/booking/create-booking",
+          {
+            turfId: bookingDetails.turfId,
+            userId: bookingDetails.userId,
+            paymentId: paymentIntent.id,
+            bookingDate: bookingDetails.bookingDate,
+            startTime: bookingDetails.startTime,
+            endTime: bookingDetails.endTime,
+            status: "confirmed",
+            amountPaid: amount,
+            paymentStatus: "paid",
+          },
+          { withCredentials: true }
+        );
+
+        if (response.status === 201) {
+          console.log(response.data);
+          console.log("Booking created");
+
+          navigate("/", {
+            state: { booking: response.data.booking },
+          });
+        } else {
+          setPaymentStatus("Booking creation failed.");
+        }
+      } catch (bookingError) {
+        console.error("Error creating booking:", bookingError.message);
+        setPaymentStatus("An error occurred while creating the booking.");
+      }
     }
   };
 

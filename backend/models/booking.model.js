@@ -14,6 +14,11 @@ const bookingSchema = new mongoose.Schema(
       required: true,
     },
 
+    paymentId: {
+      type: String,
+      required: true,
+    },
+
     bookingDate: {
       type: Date,
       required: true,
@@ -45,13 +50,13 @@ const bookingSchema = new mongoose.Schema(
       default: "unpaid",
     },
 
-    paymentDetails: {
-      transactionId: String,
-      method: {
-        type: String,
-        enum: ["credit_card", "debit_card", "upi", "net_banking"],
-      },
-    },
+    // paymentDetails: {
+    //   transactionId: String,
+    //   method: {
+    //     type: String,
+    //     enum: ["credit_card", "debit_card", "upi", "net_banking"],
+    //   },
+    // },
   },
   { timestamps: true }
 );

@@ -9,7 +9,7 @@ import turfRoute from "./routes/turf.route.js";
 import subcriptionRoute from "./routes/subcription.route.js";
 import bookingRoute from "./routes/booking.route.js";
 import paymentRoute from "./routes/payment.routes.js";
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
 dotenv.config({});
 const app = express();
@@ -20,8 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 const coroptions = {
   origin: "http://localhost:3000",
-  //crendentials: true,
+  credentials: true,
 };
+
 app.use(cors(coroptions));
 
 const PORT = process.env.PORT || 3000;
@@ -46,7 +47,7 @@ app.use("/api/v1/booking", bookingRoute);
 
 // http://localhost:8000/api/v1/booking
 
-app.use("/api/v1/payment",paymentRoute);
+app.use("/api/v1/payment", paymentRoute);
 
 // http://localhost:8000/api/v1/postPayment
 

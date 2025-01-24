@@ -3,14 +3,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux"; // Import useSelector to access Redux state
 
-
 const BookingForm = () => {
   const location = useLocation();
   const { turf, startSlot, endSlot } = location.state;
 
   const user = useSelector((state) => state.auth.user); // Get user data from Redux
-    const userId = user?._id; // Extract userId from user object in Redux
-  
+  const userId = user?._id; // Extract userId from user object in Redux
 
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -50,7 +48,7 @@ const BookingForm = () => {
         {
           amount: totalAmount,
           currency: "inr",
-          userId:userId , // Replace with actual userId if available
+          userId: userId, // Replace with actual userId if available
         }
       );
 
@@ -60,6 +58,13 @@ const BookingForm = () => {
           state: {
             clientSecret: response.data.clientSecret,
             amount: totalAmount,
+            bookingDetails: {
+              turfId: turf._id,
+              userId: userId,
+              bookingDate: startSlot.date,
+              startTime: startSlot.time,
+              endTime: endSlot.time,
+            },
           },
         });
       } else {

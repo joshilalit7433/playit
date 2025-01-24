@@ -7,9 +7,7 @@ import {
 
 const router = express.Router();
 
-router.route("/create-booking").post(isAuthenticated, createBooking);
-router
-  .route("/get-user-bookings/:userId")
-  .get(isAuthenticated, displayUserBookings);
+router.route("/create-booking").post(createBooking);
+router.route("/get-user-bookings/:userId").get(displayUserBookings);
 
 export default router;

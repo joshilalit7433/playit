@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { format } from "date-fns"; // Importing date-fns for date formatting
 
 function DisplayBookings() {
   const { user } = useSelector((store) => store.auth); // Get logged-in user info from Redux
@@ -66,7 +67,7 @@ function DisplayBookings() {
                   </p>
                   <p className="text-sm text-gray-700 mt-2">
                     <strong>Date:</strong>{" "}
-                    {new Date(booking.bookingDate).toLocaleDateString()}
+                    {format(new Date(booking.createdAt), "dd/MM/yyyy")}
                   </p>
                   <p className="text-sm text-gray-700 mt-2">
                     <strong>Start Time:</strong> {booking.startTime}

@@ -350,13 +350,18 @@ const SingleTurfDetail = () => {
         </table>
       </div>
 
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center lg:gap-x-10 mt-6">
         <button
           onClick={handleProceedToBooking}
           className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
         >
           {user ? "Proceed to Booking" : "Please log in to book"}
         </button>
+        <Link to={"/buysubscription"}>
+        <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+          Buy Subscription
+        </button>
+        </Link>
       </div>
     </div>
   );

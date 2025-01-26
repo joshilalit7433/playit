@@ -17,7 +17,8 @@ import Sports from "./components/Sports";
 import Subscription from "./routes/Subscription";
 import CheckOut from "./components/CheckOut" ;
 import DisplayBookings from "./components/DisplayBookings";
-     
+import BuySubsciption from "./routes/BuySubsciption";
+
   
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/checkout" element={<CheckOut />} /> 
         <Route path="/displaybookings" element={<DisplayBookings />} /> 
+        <Route path="/buysubscription" element={<BuySubsciption />} /> 
           
 
 

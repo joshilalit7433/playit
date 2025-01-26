@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const SubscriptionPlans = () => {
   const plans = [
@@ -22,7 +23,7 @@ const SubscriptionPlans = () => {
       content: [
         {
           type: "Basic",
-          bookings: "4 booking,1 hour each",
+          bookings: "4 booking, 1 hour each",
           discount: "25% discount on 4th booking",
         },
         {
@@ -55,10 +56,10 @@ const SubscriptionPlans = () => {
         {plans.map((plan, index) => (
           <div
             key={index}
-            className="card bg-white shadow-lg rounded-xl  border  border-green-300"
+            className="card bg-white shadow-lg rounded-xl border border-green-300"
           >
             <div className="bg-green-500 rounded-t-xl pt-8">
-              <h3 className="text-2xl font-bold text-center  pb-7 ">
+              <h3 className="text-2xl font-bold text-center pb-7">
                 {plan.duration}
               </h3>
             </div>
@@ -87,6 +88,13 @@ const SubscriptionPlans = () => {
                   {plan.content[1].discount}
                 </p>
               </div>
+            </div>
+            <div className="flex justify-center pb-8">
+              <Link to={"/turfs"}>
+              <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full">
+                Select Subscription for Turf
+              </button>
+              </Link>
             </div>
           </div>
         ))}

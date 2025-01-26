@@ -5,7 +5,7 @@ import { useSelector } from "react-redux"; // Import useSelector to access Redux
 
 const BookingForm = () => {
   const location = useLocation();
-  const { turf, startSlot, endSlot } = location.state; // Retrieve turf and slot details
+  const { turf, startSlot, endSlot, bookingDate } = location.state; // Retrieve turf and slot details
   const user = useSelector((state) => state.auth.user); // Get user data from Redux
   const userId = user?._id; // Extract userId from Redux
 
@@ -63,12 +63,12 @@ const BookingForm = () => {
             bookingDetails: {
               turfId: turf._id,
               userId: userId,
-              bookingDate: startSlot.date,
+              bookingDate: bookingDate,
               startTime: startSlot.time,
               endTime: endSlot.time,
-              status: "pending", // Default booking status
+              status: "pending",
               amountPaid: totalAmount,
-              paymentStatus: "unpaid", // Initial payment status
+              paymentStatus: "unpaid",
             },
           },
         });

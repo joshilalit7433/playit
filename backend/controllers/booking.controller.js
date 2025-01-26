@@ -95,7 +95,9 @@ export const displayUserBookings = async (req, res) => {
       .sort({ bookingDate: -1 }); // Sort by booking date, most recent first
 
     if (!bookings || bookings.length === 0) {
-      return res.status(404).json({ message: "No bookings found for this user." });
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this user." });
     }
 
     return res.status(200).json({ bookings });
@@ -105,3 +107,27 @@ export const displayUserBookings = async (req, res) => {
   }
 };
 
+export const displayTurfBookings = async (req, res) => {
+  try {
+    const { turfId } = req.params;
+
+    // Fetch bookings for the turf, including user details
+    const bookings = await Booking.find({ turfId })
+      .populate({
+        path: "userId",
+        select: "name email phone", // Include relevant user fields
+      })
+      .sort({ bookingDate: -1 }); // Sort by booking date, most recent first
+
+    if (!bookings || bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this turf." });
+    }
+
+    return res.status(200).json({ bookings });
+  } catch (error) {
+    console.error("Error fetching turf bookings:", error);
+    return res.status(500).json({ message: "Failed to fetch turf bookings." });
+  }
+};

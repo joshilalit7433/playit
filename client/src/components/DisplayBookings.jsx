@@ -33,7 +33,9 @@ function DisplayBookings() {
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center items-center">
       <div className="max-w-4xl w-full p-6 bg-white shadow-md rounded-lg">
-        <h1 className="text-2xl font-semibold mb-6 text-center">Your Bookings</h1>
+        <h1 className="text-2xl font-semibold mb-6 text-center">
+          Your Bookings
+        </h1>
         {loading ? (
           <p className="text-center text-gray-500">Loading bookings...</p>
         ) : error ? (
@@ -48,7 +50,10 @@ function DisplayBookings() {
                 {/* Turf Image */}
                 <div className="w-1/4">
                   <img
-                    src={booking.turfId?.images || "https://via.placeholder.com/150"}
+                    src={
+                      booking.turfId?.images ||
+                      "https://via.placeholder.com/150"
+                    }
                     alt={booking.turfId?.name || "Turf Image"}
                     className="w-full h-full rounded-lg object-cover"
                   />
@@ -63,11 +68,12 @@ function DisplayBookings() {
                     <strong>Price:</strong> ₹{booking.turfId?.price || 0}/hour
                   </p>
                   <p className="text-sm text-gray-700 mt-2">
-                    <strong>Location:</strong> {booking.turfId?.location || "Unknown"}
+                    <strong>Location:</strong>{" "}
+                    {booking.turfId?.location || "Unknown"}
                   </p>
                   <p className="text-sm text-gray-700 mt-2">
                     <strong>Date:</strong>{" "}
-                    {format(new Date(booking.createdAt), "dd/MM/yyyy")}
+                    {format(new Date(booking.bookingDate), "dd/MM/yyyy")}
                   </p>
                   <p className="text-sm text-gray-700 mt-2">
                     <strong>Start Time:</strong> {booking.startTime}

@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const SingleTurfDetail = () => {
   const location = useLocation();
@@ -10,6 +11,24 @@ const SingleTurfDetail = () => {
   const { user } = useSelector((store) => store.auth);
   const [startSlot, setStartSlot] = useState(null);
   const [endSlot, setEndSlot] = useState(null);
+  const [bookedSlots, setBookedSlots] = useState([]);
+
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/booking/get-turf-bookings/${turf._id}`
+        );
+        setBookedSlots(response.data.bookings || []);
+      } catch (error) {
+        console.error("Error fetching booked slots:", error);
+      }
+    };
+
+    if (turf) {
+      fetchBookedSlots();
+    }
+  }, [turf]);
 
   if (!turf) {
     return <p>Loading turf details...</p>;
@@ -69,7 +88,7 @@ const SingleTurfDetail = () => {
     "10:30 PM",
     "11:00 PM",
     "11:30 PM",
-    "12:00 AM",
+    "11:59 PM",
   ];
 
   const weekDates = getCurrentWeekDates();
@@ -89,7 +108,49 @@ const SingleTurfDetail = () => {
     return hour >= 18 || hour < 6;
   };
 
+  const isSlotBooked = (date, time) => {
+    return bookedSlots.some((slot) => {
+      const bookedDate = new Date(slot.bookingDate);
+      const formattedBookedDate = bookedDate.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
+
+      if (formattedBookedDate !== date) return false;
+
+      // Convert current slot time to minutes for comparison
+      const [slotTime, slotPeriod] = time.split(" ");
+      const [slotHours, slotMinutes] = slotTime.split(":").map(Number);
+      let slotTotalMinutes = slotHours * 60 + slotMinutes;
+      if (slotPeriod === "PM" && slotHours !== 12) slotTotalMinutes += 12 * 60;
+      if (slotPeriod === "AM" && slotHours === 12) slotTotalMinutes = 0;
+
+      // Convert booking start time to minutes
+      const [startTime, startPeriod] = slot.startTime.split(" ");
+      const [startHours, startMinutes] = startTime.split(":").map(Number);
+      let startTotalMinutes = startHours * 60 + startMinutes;
+      if (startPeriod === "PM" && startHours !== 12)
+        startTotalMinutes += 12 * 60;
+      if (startPeriod === "AM" && startHours === 12) startTotalMinutes = 0;
+
+      // Convert booking end time to minutes
+      const [endTime, endPeriod] = slot.endTime.split(" ");
+      const [endHours, endMinutes] = endTime.split(":").map(Number);
+      let endTotalMinutes = endHours * 60 + endMinutes;
+      if (endPeriod === "PM" && endHours !== 12) endTotalMinutes += 12 * 60;
+      if (endPeriod === "AM" && endHours === 12) endTotalMinutes = 0;
+
+      // Check if current slot time falls within the booking period
+      return (
+        slotTotalMinutes >= startTotalMinutes &&
+        slotTotalMinutes <= endTotalMinutes
+      );
+    });
+  };
+
   const toggleSlotSelection = (date, time) => {
+    if (isSlotBooked(date, time)) return;
+
     const slot = { date, time };
     if (!startSlot) {
       setStartSlot(slot);
@@ -146,8 +207,50 @@ const SingleTurfDetail = () => {
       return;
     }
 
+    // Parse the date components
+    const [day, monthStr] = startSlot.date.split(" ");
+    const months = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
+    };
+
+    // Parse the time components
+    const [timeStr, period] = startSlot.time.split(" ");
+    const [hours, minutes] = timeStr.split(":").map(Number);
+
+    // Convert to 24-hour format
+    let hours24 = hours;
+    if (period === "PM" && hours !== 12) {
+      hours24 += 12;
+    } else if (period === "AM" && hours === 12) {
+      hours24 = 0;
+    }
+
+    // Create date object with current year
+    const currentYear = new Date().getFullYear();
+    const date = new Date(
+      currentYear,
+      months[monthStr],
+      parseInt(day),
+      hours24,
+      minutes
+    );
+
+    const bookingDate = date.toISOString();
+    console.log("Generated bookingDate:", bookingDate);
+
     navigate(`/turfs/${turf._id}/booking`, {
-      state: { turf, startSlot, endSlot },
+      state: { turf, startSlot, endSlot, bookingDate },
     });
   };
 
@@ -216,21 +319,28 @@ const SingleTurfDetail = () => {
                       startSlot.time === time) ||
                     (endSlot && endSlot.date === date && endSlot.time === time);
 
+                  const isBooked = isSlotBooked(date, time);
+
                   return (
                     <td
                       key={colIndex}
-                      className={`border border-gray-300 px-4 py-2 text-center cursor-pointer ${
-                        isNightTime(time)
-                          ? isSelected
-                            ? "bg-green-500 text-white"
-                            : "bg-black text-white hover:bg-gray-800"
-                          : isSelected
-                          ? "bg-green-500 text-white"
-                          : "bg-yellow-100 text-gray-800 hover:bg-yellow-200"
-                      }`}
-                      onClick={() => toggleSlotSelection(date, time)}
+                      className={`border border-gray-300 px-4 py-2 text-center 
+                        ${
+                          isBooked
+                            ? "bg-gray-400 text-white cursor-not-allowed"
+                            : isNightTime(time)
+                            ? isSelected
+                              ? "bg-green-500 text-white cursor-pointer"
+                              : "bg-black text-white hover:bg-gray-800 cursor-pointer"
+                            : isSelected
+                            ? "bg-green-500 text-white cursor-pointer"
+                            : "bg-yellow-100 text-gray-800 hover:bg-yellow-200 cursor-pointer"
+                        }`}
+                      onClick={() =>
+                        !isBooked && toggleSlotSelection(date, time)
+                      }
                     >
-                      {time}
+                      {isBooked ? "Booked" : time}
                     </td>
                   );
                 })}

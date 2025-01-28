@@ -8,7 +8,11 @@ import { useNavigate } from "react-router-dom";
 const SportsTurfPage = () => {
   const { sport } = useParams(); // Get the sport type from the route params
   const [turfs, setTurfs] = useState([]);
-  const [filters, setFilters] = useState({ Location: "", Sports: sport, Price: "" });
+  const [filters, setFilters] = useState({
+    Location: "",
+    Sports: sport,
+    Price: "",
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +41,8 @@ const SportsTurfPage = () => {
 
   // Filter turfs based on the filters
   const filteredTurfs = turfs.filter((turf) => {
-    const matchesLocation = !filters.Location || turf.location === filters.Location;
+    const matchesLocation =
+      !filters.Location || turf.location === filters.Location;
     const matchesSport = !filters.Sports || turf.sports_type === filters.Sports;
     const matchesPrice =
       !filters.Price || turf.price === parseInt(filters.Price, 10); // Convert filters.Price to number
@@ -47,16 +52,16 @@ const SportsTurfPage = () => {
   return (
     <div className="lg:flex lg:flex-row">
       {/* Filter Component */}
-      <div className="lg:w-1/4">
+      <div className="lg:w-[200px]">
         <FilterTurfs onFilterChange={handleFilterChange} />
       </div>
 
       {/* Turfs Display */}
-      <div className="lg:w-3/4">
-        <h1 className="lg:ml-[250px] lg:text-[25px] lg:mt-4 lg:mb-4 capitalize">
+      <div className="lg:flex-1 lg:ml-[200px]">
+        <h1 className="text-center lg:text-[25px] lg:mt-4 lg:mb-4 capitalize">
           {sport} Turfs
         </h1>
-        <div className="lg:grid lg:grid-rows-3 lg:grid-cols-3 lg:ml-[220px] gap-6">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6 p-4">
           {filteredTurfs.map((turf) => (
             <div
               key={turf._id}

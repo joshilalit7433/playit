@@ -21,7 +21,7 @@ const filterData = [
   },
   {
     filterType: "Price",
-    options: ["500-1000", "1000-1500"], // Price ranges updated
+    options: ["500-1000", "1000-1500"],
   },
 ];
 
@@ -32,7 +32,7 @@ const FilterTurfs = ({ onFilterChange }) => {
     Price: "",
   });
 
-  const [activeTab, setActiveTab] = useState(null); // For mobile tabs
+  const [activeTab, setActiveTab] = useState(null);
 
   const handleFilterChange = (filterType, value) => {
     const updatedFilters = { ...selectedFilters, [filterType]: value };
@@ -49,17 +49,17 @@ const FilterTurfs = ({ onFilterChange }) => {
   return (
     <>
       {/* Desktop Filters */}
-      <div className="hidden lg:block p-4 pr-12 border-r border-gray-300 fixed top-0 h-full overflow-y-auto ">
-        <h1 className="text-2xl font-bold text-[#31a022] mb-4 mt-20">
+      <div className="hidden lg:block p-4 border-r border-gray-200 fixed top-[64px] h-[calc(100vh-64px)] overflow-y-auto w-[200px] bg-white shadow-lg z-10">
+        <h1 className="text-xl font-bold text-[#31a022] mb-6 mt-4">
           Filter Turfs
         </h1>
         {filterData.map((data, index) => (
           <div key={index} className="mb-4">
-            <h2 className="text-lg font-semibold text-[#31a022]">
+            <h2 className="text-lg font-semibold text-[#31a022] mb-2">
               {data.filterType}
             </h2>
             {data.options.map((item, optionIndex) => (
-              <div key={optionIndex} className="flex items-center mt-1.5">
+              <div key={optionIndex} className="flex items-center mb-2">
                 <input
                   type="radio"
                   id={`${data.filterType}-${item}`}
@@ -67,16 +67,21 @@ const FilterTurfs = ({ onFilterChange }) => {
                   value={item}
                   onChange={() => handleFilterChange(data.filterType, item)}
                   checked={selectedFilters[data.filterType] === item}
-                  className="mr-2"
+                  className="form-radio h-4 w-4 text-[#31a022]"
                 />
-                <label htmlFor={`${data.filterType}-${item}`}>{item}</label>
+                <label
+                  htmlFor={`${data.filterType}-${item}`}
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  {item}
+                </label>
               </div>
             ))}
           </div>
         ))}
         <button
           onClick={resetFilters}
-          className="w-full bg-[#31a022] text-white py-2 rounded"
+          className="w-full bg-[#31a022] text-white py-2 px-4 rounded-md hover:bg-[#268a1a] transition duration-300"
         >
           Reset Filters
         </button>
@@ -84,14 +89,16 @@ const FilterTurfs = ({ onFilterChange }) => {
 
       {/* Mobile Filters */}
       <div className="lg:hidden">
-        <div className="flex justify-around border-b">
+        <div className="flex justify-around border-b border-gray-200 bg-white sticky top-0 z-10">
           {filterData.map((filter, index) => (
             <button
               key={index}
               onClick={() => setActiveTab(activeTab === index ? null : index)}
-              className={`px-4 py-2 ${
-                activeTab === index ? "border-b-2 border-[#31a022]" : ""
-              }`}
+              className={`px-4 py-3 text-sm font-medium ${
+                activeTab === index
+                  ? "text-[#31a022] border-b-2 border-[#31a022]"
+                  : "text-gray-600 hover:text-[#31a022]"
+              } transition duration-300 ease-in-out`}
             >
               {filter.filterType}
             </button>
@@ -101,8 +108,10 @@ const FilterTurfs = ({ onFilterChange }) => {
         {filterData.map((filter, index) => (
           <div
             key={index}
-            className={`absolute z-10 bg-white border rounded shadow-lg w-full px-4 py-2 transition-all ${
-              activeTab === index ? "block" : "hidden"
+            className={`absolute z-20 bg-white border border-gray-200 rounded-b-lg shadow-lg w-full px-4 py-3 transition-all duration-300 ease-in-out ${
+              activeTab === index
+                ? "opacity-100 visible"
+                : "opacity-0 invisible"
             }`}
           >
             {filter.options.map((option, optionIndex) => (
@@ -113,9 +122,12 @@ const FilterTurfs = ({ onFilterChange }) => {
                   value={option}
                   onChange={() => handleFilterChange(filter.filterType, option)}
                   checked={selectedFilters[filter.filterType] === option}
-                  className="mr-2"
+                  className="form-checkbox h-4 w-4 text-[#31a022] transition duration-150 ease-in-out"
                 />
-                <label htmlFor={`${filter.filterType}-${optionIndex}`}>
+                <label
+                  htmlFor={`${filter.filterType}-${optionIndex}`}
+                  className="ml-2 text-sm text-gray-700"
+                >
                   {option}
                 </label>
               </div>
@@ -123,10 +135,10 @@ const FilterTurfs = ({ onFilterChange }) => {
           </div>
         ))}
 
-        <div className="p-4">
+        <div className="p-4 bg-white sticky bottom-0 border-t border-gray-200">
           <button
             onClick={resetFilters}
-            className="w-full bg-[#31a022] text-white py-2 rounded"
+            className="w-full bg-[#31a022] text-white py-2 px-4 rounded-md hover:bg-[#268a1a] transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#31a022] focus:ring-opacity-50"
           >
             Reset Filters
           </button>

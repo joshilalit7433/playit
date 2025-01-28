@@ -14,7 +14,6 @@ root.render(
       <StripeProvider>
         <App />
       </StripeProvider>
-      ,
     </Provider>
   </React.StrictMode>
 );

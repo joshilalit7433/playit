@@ -47,9 +47,9 @@ const FilterTurfs = ({ onFilterChange }) => {
   };
 
   return (
-    <>
+    <div className="mt-16">
       {/* Desktop Filters */}
-      <div className="hidden lg:block p-4 border-r border-gray-200 fixed top-[64px] h-[calc(100vh-64px)] overflow-y-auto w-[200px] bg-white shadow-lg z-10">
+      <div className=" hidden lg:block p-4 border-r border-gray-200 fixed top-[64px] h-[calc(100vh-64px)] overflow-y-auto w-[200px] bg-white shadow-lg z-10">
         <h1 className="text-xl font-bold text-[#31a022] mb-6 mt-4">
           Filter Turfs
         </h1>
@@ -144,7 +144,7 @@ const FilterTurfs = ({ onFilterChange }) => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

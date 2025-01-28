@@ -47,12 +47,10 @@ export default function Turf({ filters }) {
     const matchesSport = !filters.Sports || turf.sports_type === filters.Sports;
     const matchesPrice = isPriceInRange(turf.price, filters.Price); // Check if price is in the selected range
     return matchesLocation && matchesSport && matchesPrice;
-    
-
   });
 
   return (
-    <div>
+    <div className="lg:mt-16">
       <h1 className="lg:ml-[250px] lg:text-[25px] lg:mt-4 lg:mb-4 justify-center text-center">
         Turfs
       </h1>

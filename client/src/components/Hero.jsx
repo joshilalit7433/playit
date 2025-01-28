@@ -65,7 +65,7 @@ export default function Hero() {
 
   return (
     <div
-      className="relative group mx-auto max-w-[90%] lg:max-w-[80%] py-8"
+      className="relative group mx-auto max-w-[90%] lg:max-w-[80%] py-8 mt-16"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

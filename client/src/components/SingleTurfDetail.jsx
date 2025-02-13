@@ -255,7 +255,7 @@ const SingleTurfDetail = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6">
+    <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6 lg:mt-[100px]">
       <h1 className="text-3xl font-bold mb-4">{turf.name}</h1>
       <img
         src={turf.images}

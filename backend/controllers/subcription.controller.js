@@ -7,10 +7,14 @@ export const createSubscription = async (req, res) => {
       startDate,
       endDate,
       price,
-      duration,
-      timeSlots,
       paymentDetails,
     } = req.body;
+
+    if(  !userId,!turfId,! startDate,!endDate,! price,!paymentDetails){
+      return res.status(400).json({ error: "Missing required fields." });
+
+
+    }
 
     const newSubscription = new Subscription({
       userId,
@@ -18,8 +22,6 @@ export const createSubscription = async (req, res) => {
       startDate,
       endDate,
       price,
-      duration,
-      timeSlots,
       paymentDetails,
     });
 

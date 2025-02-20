@@ -32,7 +32,7 @@ const BuySubscription = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-6">
+    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-6 lg:pt-[100px]">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md mb-6">
         <h2 className="text-lg font-semibold mb-4">Select a Date</h2>
         <div className="border p-4 rounded-lg">

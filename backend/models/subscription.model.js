@@ -23,34 +23,14 @@ const SubscriptionSchema = new mongoose.Schema({
     required: true,
   },
   duration: {
-    type: Number, // months
+    type: Number, // in days, weeks, or months
     required: true,
   },
   isActive: {
     type: Boolean,
     default: true,
   },
-  timeSlots: [
-    {
-      date: {
-        type: Date,
-        required: true,
-      },
-      startTime: {
-        type: String, // Format: "HH:mm" (e.g., "14:00")
-        required: true,
-      },
-      endTime: {
-        type: String, // Format: "HH:mm" (e.g., "16:00")
-        required: true,
-      },
-      status: {
-        type: String,
-        enum: ["available", "booked"],
-        default: "available",
-      },
-    },
-  ],
+
   paymentDetails: {
     method: {
       type: String,

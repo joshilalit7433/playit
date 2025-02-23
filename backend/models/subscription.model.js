@@ -23,7 +23,7 @@ const SubscriptionSchema = new mongoose.Schema({
     required: true,
   },
   duration: {
-    type: Number, // in days, weeks, or months
+    type: Number, // months
     required: true,
   },
   isActive: {

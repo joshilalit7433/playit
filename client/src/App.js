@@ -15,11 +15,10 @@ import BadmintonTurfPage from "./routes/BadmintonTurfPage";
 import FootballTurfPage from "./routes/FootballTurfPage";
 import Sports from "./components/Sports";
 import Subscription from "./routes/Subscription";
-import CheckOut from "./components/CheckOut" ;
+import CheckOut from "./components/CheckOut";
 import DisplayBookings from "./components/DisplayBookings";
 import BuySubsciption from "./routes/BuySubsciption";
 
-  
 function App() {
   return (
     <BrowserRouter>
@@ -39,13 +38,9 @@ function App() {
         <Route path="/sports/badminton" element={<BadmintonTurfPage />} />
         <Route path="/sports/football" element={<FootballTurfPage />} />
         <Route path="/subscription" element={<Subscription />} />
-        <Route path="/checkout" element={<CheckOut />} /> 
-        <Route path="/displaybookings" element={<DisplayBookings />} /> 
-        <Route path="/buysubscription" element={<BuySubsciption />} /> 
-          
-
-
-        
+        <Route path="/checkout" element={<CheckOut />} />
+        <Route path="/displaybookings" element={<DisplayBookings />} />
+        <Route path="/turfs/:id/buysubscription" element={<BuySubsciption />} />
       </Routes>
     </BrowserRouter>
   );

@@ -254,6 +254,49 @@ const SingleTurfDetail = () => {
     });
   };
 
+  const isSlotInPast = (date, time) => {
+    // Parse the date components
+    const [day, monthStr] = date.split(" ");
+    const months = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      May: 4,
+      Jun: 5,
+      Jul: 6,
+      Aug: 7,
+      Sep: 8,
+      Oct: 9,
+      Nov: 10,
+      Dec: 11,
+    };
+
+    // Parse the time components
+    const [timeStr, period] = time.split(" ");
+    const [hours, minutes] = timeStr.split(":").map(Number);
+
+    // Convert to 24-hour format
+    let hours24 = hours;
+    if (period === "PM" && hours !== 12) hours24 += 12;
+    if (period === "AM" && hours === 12) hours24 = 0;
+
+    // Create date object for the slot
+    const currentYear = new Date().getFullYear();
+    const slotDate = new Date(
+      currentYear,
+      months[monthStr],
+      parseInt(day),
+      hours24,
+      minutes
+    );
+
+    // Get current date/time
+    const now = new Date();
+
+    return slotDate < now;
+  };
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6 lg:mt-[100px]">
       <h1 className="text-3xl font-bold text-center mb-6">{turf.name}</h1>
@@ -326,7 +369,9 @@ const SingleTurfDetail = () => {
                       key={colIndex}
                       className={`border border-gray-300 px-4 py-2 text-center 
                         ${
-                          isBooked
+                          isSlotInPast(date, time)
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : isBooked
                             ? "bg-gray-400 text-white cursor-not-allowed"
                             : isNightTime(time)
                             ? isSelected
@@ -337,10 +382,16 @@ const SingleTurfDetail = () => {
                             : "bg-yellow-100 text-gray-800 hover:bg-yellow-200 cursor-pointer"
                         }`}
                       onClick={() =>
-                        !isBooked && toggleSlotSelection(date, time)
+                        !isBooked &&
+                        !isSlotInPast(date, time) &&
+                        toggleSlotSelection(date, time)
                       }
                     >
-                      {isBooked ? "Booked" : time}
+                      {isSlotInPast(date, time)
+                        ? "Past"
+                        : isBooked
+                        ? "Booked"
+                        : time}
                     </td>
                   );
                 })}

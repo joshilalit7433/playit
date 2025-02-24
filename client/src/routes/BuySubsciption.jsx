@@ -116,6 +116,14 @@ const BuySubscription = () => {
       return;
     }
 
+    // Add this new validation
+    if (isSlotInPast(startDate, startTime)) {
+      alert(
+        "Cannot book slots from past time. Please select a future time slot."
+      );
+      return;
+    }
+
     // Check if slot is already booked
     if (isSlotBooked(startDate, startTime, endTime)) {
       alert(
@@ -269,6 +277,36 @@ const BuySubscription = () => {
   // Add this before the return statement
   const totals = calculateTotal();
 
+  const isSlotInPast = (date, time) => {
+    const now = new Date();
+    const selectedDate = new Date(date);
+
+    // Reset hours to compare just the dates
+    const todayDate = new Date(now);
+    todayDate.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    // If selected date is before today, slot is in past
+    if (selectedDate < todayDate) return true;
+
+    // If it's today, check the time
+    if (selectedDate.getTime() === todayDate.getTime()) {
+      const [timeStr, period] = time.split(" ");
+      let [hours, minutes] = timeStr.split(":").map(Number);
+
+      // Convert to 24-hour format
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+
+      const selectedDateTime = new Date();
+      selectedDateTime.setHours(hours, minutes, 0, 0);
+
+      return selectedDateTime < now;
+    }
+
+    return false;
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 mt-14 p-4">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-7xl">
@@ -307,11 +345,19 @@ const BuySubscription = () => {
                   className="w-full p-3 border rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 text-lg"
                 >
                   <option value="">Select start time</option>
-                  {times.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))}
+                  {times.map((time) => {
+                    const isPastTime = isSlotInPast(startDate, time);
+                    return (
+                      <option
+                        key={time}
+                        value={time}
+                        disabled={isPastTime}
+                        className={isPastTime ? "text-gray-400" : ""}
+                      >
+                        {time} {isPastTime ? "(Past)" : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
               <div>
@@ -324,11 +370,19 @@ const BuySubscription = () => {
                   className="w-full p-3 border rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 text-lg"
                 >
                   <option value="">Select end time</option>
-                  {times.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))}
+                  {times.map((time) => {
+                    const isPastTime = isSlotInPast(startDate, time);
+                    return (
+                      <option
+                        key={time}
+                        value={time}
+                        disabled={isPastTime}
+                        className={isPastTime ? "text-gray-400" : ""}
+                      >
+                        {time} {isPastTime ? "(Past)" : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 

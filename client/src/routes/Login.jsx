@@ -156,46 +156,11 @@ export default function Login() {
           <p className="text-red-500 text-sm">{formerrors.password}</p>
         </div>
 
-        {/* Role Input */}
-        <div className="mb-4">
-          <label className="text-sm text-white">Role:</label>
-          <div className="flex items-center space-x-4 mt-2">
-            <div className="flex items-center">
-              <input
-                type="radio"
-                id="User"
-                name="role"
-                value="user"
-                onChange={change}
-                className="mr-2"
-              />
-              <label htmlFor="User" className="text-white">
-                User
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                type="radio"
-                id="Admin"
-                name="role"
-                value="admin"
-                onChange={change}
-                className="mr-2"
-              />
-              <label htmlFor="Admin" className="text-white">
-                Admin
-              </label>
-            </div>
-          </div>
-          <p className="text-red-500 text-sm">{formerrors.role}</p>
-        </div>
+        
 
         {/* Remember Me and Forgot Password */}
         <div className="flex justify-between text-white text-sm mb-6">
-          <label className="flex items-center">
-            <input type="checkbox" className="mr-2" />
-            Remember me
-          </label>
+          
           <Link to="/forgot-password" className="underline">
             Forgot Password?
           </Link>

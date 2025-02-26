@@ -11,8 +11,7 @@ export default function Signup() {
     fullname: "",
     email: "",
     password: "",
-    mobilenumber: "",
-    role: "",
+    mobilenumber: ""
   };
 
   const navigate = useNavigate();
@@ -36,7 +35,6 @@ export default function Signup() {
     formData.append("email", formvalues.email);
     formData.append("mobilenumber", formvalues.mobilenumber);
     formData.append("password", formvalues.password);
-    formData.append("role", formvalues.role);
 
     try {
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
@@ -102,9 +100,7 @@ export default function Signup() {
       errors.mobilenumber = "Invalid mobile number";
     }
 
-    if (!values.role) {
-      errors.role = "Role Is Required";
-    }
+  
 
     return errors;
   };

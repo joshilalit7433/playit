@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { Mail, Lock } from "lucide-react"; // Importing Lucide icons
 
 export default function Login() {
-  const initialvalues = { email: "", password: "", role: "" };
+  const initialvalues = { email: "", password: "" };
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
@@ -29,7 +29,6 @@ export default function Login() {
     const formData = new FormData();
     formData.append("email", formvalues.email);
     formData.append("password", formvalues.password);
-    formData.append("role", formvalues.role);
 
     try {
       const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
@@ -105,9 +104,7 @@ export default function Login() {
       errors.password = "Password should not be less than 4 characters";
     }
 
-    if (!values.role) {
-      errors.role = "Role is required";
-    }
+   
 
     return errors;
   };

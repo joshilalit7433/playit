@@ -4,10 +4,10 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   try {
-    const { fullname, email, mobilenumber, password, role } = req.body;
-    console.log(fullname, email, mobilenumber, password, role);
+    const { fullname, email, mobilenumber, password } = req.body;
+    console.log(fullname, email, mobilenumber, password);
 
-    if (!fullname || !email || !mobilenumber || !password || !role) {
+    if (!fullname || !email || !mobilenumber || !password ) {
       return res.status(400).json({
         message: "something is missing",
         success: false,
@@ -30,7 +30,6 @@ export const register = async (req, res) => {
       email,
       mobilenumber,
       password: hashedpassword,
-      role,
     });
 
     return res.status(201).json({
@@ -44,8 +43,8 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password || !role) {
+    const { email, password } = req.body;
+    if (!email || !password ) {
       return res.status(400).json({
         message: "something is missing",
         success: false,
@@ -70,13 +69,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // check role is correct or not
-    if (role !== user.role) {
-      return res.status(400).json({
-        message: "Account doesn't exist with current role.",
-        success: false,
-      });
-    }
+    
 
     const tokendata = {
       userid: user._id,
@@ -91,7 +84,6 @@ export const login = async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       mobilenumber: user.mobilenumber,
-      role: user.role,
     };
 
     return res

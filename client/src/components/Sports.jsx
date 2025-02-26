@@ -8,55 +8,60 @@ export default function Sports() {
     navigate(`/sports/${sport}`);
   };
 
+  const sports = [
+    {
+      name: "CRICKET",
+      image: "./images/cricket.jpeg",
+      path: "cricket",
+    },
+    {
+      name: "BADMINTON",
+      image: "./images/badminton.jpeg",
+      path: "badminton",
+    },
+    {
+      name: "FOOTBALL",
+      image: "./images/football.jpeg",
+      path: "football",
+    },
+  ];
+
   return (
-    <>
-      <div className="mt-[20px] mb-[20px]">
-        <div className="mb-[15px]">
-          <p className=" text-3xl flex justify-center lg:text-4xl lg:flex lg:justify-center">
-            {" "}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             Sports List
-          </p>
-          <p className=" text-xl flex justify-center lg:text-2xl lg:flex lg:justify-center">
-            {" "}
-            Come, Lets Play..
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-600">
+            Come, Let's Play..
           </p>
         </div>
 
-        <div className=" grid grid-rows-2 grid-cols-2 pl-[20px] lg:grid lg:grid-rows-1 lg:grid-cols-3 lg:pl-[200px]">
-          <div className="lg:mb-[20px] " onClick={() => handleSportClick("cricket")}>
-            <img
-              src="./images/cricket.jpeg"
-              alt="cricket"
-              className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl cursor-pointer"
-            ></img>
-            <p className=" text-xl ml-[40px] lg:text-[25px] lg:ml-[70px]">
-              CRICKET
-            </p>
-          </div>
-
-          <div className="lg:mb-[20px] " onClick={() => handleSportClick("badminton")}>
-            <img
-              src="./images/badminton.jpeg"
-              alt="badminton"
-              className="h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl cursor-pointer"
-            ></img>
-            <p className=" text-xl ml-[20px] lg:text-[25px] lg:ml-[50px]">
-              BADMINTON
-            </p>
-          </div>
-
-          <div className="lg:mb-[20px] " onClick={() => handleSportClick("football")}>
-            <img
-              src="./images/football.jpeg"
-              alt="football"
-              className=" h-[200px] w-[150px] lg:h-[350px] lg:w-[250px] rounded-3xl cursor-pointer"
-            ></img>
-            <p className=" text-xl ml-[30px] lg:text-[25px] lg:ml-[60px]">
-              FOOTBALL
-            </p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {sports.map((sport) => (
+            <div
+              key={sport.name}
+              onClick={() => handleSportClick(sport.path)}
+              className="transform transition duration-300 hover:scale-105"
+            >
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="relative">
+                  <img
+                    src={sport.image}
+                    alt={sport.name.toLowerCase()}
+                    className="w-full h-48 sm:h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 transition duration-300 hover:bg-opacity-10" />
+                </div>
+                <div className="p-4 text-center bg-gradient-to-r from-green-600 to-green-700">
+                  <h3 className="text-xl font-bold text-white">{sport.name}</h3>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

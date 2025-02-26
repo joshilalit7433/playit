@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PaymentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { clientSecret, amount, bookingDetails } = location.state; // Include bookingDetails in state
+  const { clientSecret, amount, bookingDetails, user } = location.state; // Include bookingDetails and user in state
 
   const stripe = useStripe();
   const elements = useElements();
@@ -14,56 +16,134 @@ const PaymentForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setPaymentStatus("Processing payment...");
 
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      setPaymentStatus("Stripe not initialized");
+      return;
+    }
 
-    const { error, paymentIntent } = await stripe.confirmCardPayment(
-      clientSecret,
-      {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
+    try {
+      // First check the PaymentIntent status
+      const { paymentIntent: existingIntent } =
+        await stripe.retrievePaymentIntent(clientSecret);
+
+      if (existingIntent.status === "succeeded") {
+        setPaymentStatus("This payment has already been processed.");
+        return;
       }
-    );
 
-    if (error) {
-      console.error("Payment failed:", error.message);
-      setPaymentStatus("Payment failed! Try again.");
-    } else if (paymentIntent.status === "succeeded") {
-      setPaymentStatus(`Payment succeeded! Payment ID: ${paymentIntent.id}`);
-
-      // Trigger create booking API
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/api/v1/booking/create-booking",
-          {
-            turfId: bookingDetails.turfId,
-            userId: bookingDetails.userId,
-            paymentId: paymentIntent.id,
-            bookingDate: bookingDetails.bookingDate,
-            startTime: bookingDetails.startTime,
-            endTime: bookingDetails.endTime,
-            status: "confirmed",
-            amountPaid: amount,
-            paymentStatus: "paid",
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name: user?.name || "Guest User",
+            },
           },
-          { withCredentials: true }
-        );
-
-        if (response.status === 201) {
-          console.log(response.data);
-          console.log("Booking created");
-
-          navigate("/", {
-            state: { booking: response.data.booking },
-          });
-        } else {
-          setPaymentStatus("Booking creation failed.");
         }
-      } catch (bookingError) {
-        console.error("Error creating booking:", bookingError.message);
-        setPaymentStatus("An error occurred while creating the booking.");
+      );
+
+      if (error) {
+        console.error("Payment failed:", error);
+        setPaymentStatus(`Payment failed: ${error.message}`);
+        return;
       }
+
+      if (paymentIntent.status === "succeeded") {
+        setPaymentStatus(`Payment succeeded! Processing booking...`);
+
+        // Handle subscription booking
+        if (bookingDetails.isSubscription) {
+          try {
+            const subscriptionResponse = await axios.post(
+              "http://localhost:8000/api/v1/subscription/create",
+              {
+                userId: bookingDetails.userId,
+                turfId: bookingDetails.turfId,
+                startDate: bookingDetails.startDate,
+                endDate: bookingDetails.endDate,
+                price: bookingDetails.price,
+                selectedSlots: bookingDetails.selectedSlots,
+                paymentDetails: {
+                  method: "credit_card",
+                  transactionId: paymentIntent.id,
+                  status: "completed",
+                },
+              },
+              { withCredentials: true }
+            );
+
+            if (subscriptionResponse.status === 201) {
+              toast.success("Subscription booked successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+              navigate("/");
+            }
+          } catch (error) {
+            toast.error(
+              "Failed to create subscription. Please contact support.",
+              {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "dark",
+              }
+            );
+            console.error("Subscription creation failed:", error);
+          }
+        } else {
+          // Handle regular booking
+          try {
+            const response = await axios.post(
+              "http://localhost:8000/api/v1/booking/create-booking",
+              {
+                turfId: bookingDetails.turfId,
+                userId: bookingDetails.userId,
+                paymentId: paymentIntent.id,
+                bookingDate: bookingDetails.bookingDate,
+                startTime: bookingDetails.startTime,
+                endTime: bookingDetails.endTime,
+                status: "confirmed",
+                amountPaid: amount,
+                paymentStatus: "paid",
+              },
+              { withCredentials: true }
+            );
+
+            if (response.status === 201) {
+              toast.success("Booking completed successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+              navigate("/");
+            }
+          } catch (error) {
+            toast.error("Failed to create booking. Please contact support.", {
+              position: "top-center",
+              autoClose: 3000,
+              theme: "dark",
+            });
+            console.error("Booking creation failed:", error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      setPaymentStatus("An unexpected error occurred. Please try again.");
     }
   };
 

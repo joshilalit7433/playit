@@ -12,10 +12,20 @@ const BuySubscription = () => {
   const turf = location.state?.turf;
   const { user } = useSelector((state) => state.auth);
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [selectedSlots, setSelectedSlots] = useState([]);
+  const [startDate, setStartDate] = useState(() => {
+    const savedDate = localStorage.getItem("selectedStartDate");
+    return savedDate ? new Date(savedDate) : new Date();
+  });
+  const [startTime, setStartTime] = useState(
+    () => localStorage.getItem("selectedStartTime") || ""
+  );
+  const [endTime, setEndTime] = useState(
+    () => localStorage.getItem("selectedEndTime") || ""
+  );
+  const [selectedSlots, setSelectedSlots] = useState(() => {
+    const savedSlots = localStorage.getItem("selectedSlots");
+    return savedSlots ? JSON.parse(savedSlots) : [];
+  });
   const [bookedSlots, setBookedSlots] = useState([]);
 
   // Fetch booked slots when component mounts and when turf changes
@@ -116,7 +126,6 @@ const BuySubscription = () => {
       return;
     }
 
-    // Add this new validation
     if (isSlotInPast(startDate, startTime)) {
       alert(
         "Cannot book slots from past time. Please select a future time slot."
@@ -124,7 +133,6 @@ const BuySubscription = () => {
       return;
     }
 
-    // Check if slot is already booked
     if (isSlotBooked(startDate, startTime, endTime)) {
       alert(
         "This time slot is already booked. Please select a different time."
@@ -145,7 +153,6 @@ const BuySubscription = () => {
       endTime,
     };
 
-    // Check if slot overlaps with already selected slots
     const hasOverlap = selectedSlots.some((slot) => {
       if (slot.date !== formattedDate) return false;
 
@@ -170,14 +177,14 @@ const BuySubscription = () => {
       return;
     }
 
-    setSelectedSlots([...selectedSlots, newSlot]);
-    setStartTime("");
-    setEndTime("");
+    updateSelectedSlots([...selectedSlots, newSlot]);
+    updateStartTime("");
+    updateEndTime("");
   };
 
   const handleRemoveSlot = (index) => {
     const updatedSlots = selectedSlots.filter((_, i) => i !== index);
-    setSelectedSlots(updatedSlots);
+    updateSelectedSlots(updatedSlots);
   };
 
   // Function to validate if end time is after start time
@@ -208,21 +215,16 @@ const BuySubscription = () => {
 
   const handleEndTimeChange = (time) => {
     if (isValidTimeRange(startTime, time)) {
-      setEndTime(time);
+      updateEndTime(time);
     } else {
       alert("End time must be after start time");
     }
   };
 
-  const handleProceedToBooking = () => {
+  const handleProceedToBooking = async () => {
     if (!user) {
       alert("Please log in to proceed with booking.");
       navigate("/login");
-      return;
-    }
-
-    if (selectedSlots.length === 0) {
-      alert("Please select at least one time slot");
       return;
     }
 
@@ -231,14 +233,47 @@ const BuySubscription = () => {
       return;
     }
 
-    navigate(`/turfs/${turf._id}/booking`, {
-      state: {
-        turf,
-        selectedSlots,
-        isSubscription: true,
-        totalAmount: totals.discounted,
-      },
-    });
+    try {
+      // Calculate start and end dates from selected slots
+      const dates = selectedSlots.map((slot) => new Date(slot.date));
+      const startDate = new Date(Math.min(...dates));
+      const endDate = new Date(Math.max(...dates));
+
+      // Create payment intent
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/payment/post-payment",
+        {
+          amount: totals.discounted,
+          currency: "inr",
+          userId: user._id,
+        }
+      );
+
+      if (response.data.clientSecret) {
+        navigate("/checkout", {
+          state: {
+            clientSecret: response.data.clientSecret,
+            amount: totals.discounted,
+            bookingDetails: {
+              turfId: turf._id,
+              userId: user._id,
+              startDate: startDate,
+              endDate: endDate,
+              price: totals.discounted,
+              selectedSlots: selectedSlots,
+              paymentDetails: {
+                method: "credit_card",
+                status: "pending",
+              },
+              isSubscription: true,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error creating payment intent:", error);
+      alert("Failed to initialize payment. Please try again.");
+    }
   };
 
   // Calculate total amount with discount
@@ -307,6 +342,26 @@ const BuySubscription = () => {
     return false;
   };
 
+  const updateStartDate = (date) => {
+    setStartDate(date);
+    localStorage.setItem("selectedStartDate", date.toISOString());
+  };
+
+  const updateStartTime = (time) => {
+    setStartTime(time);
+    localStorage.setItem("selectedStartTime", time);
+  };
+
+  const updateEndTime = (time) => {
+    setEndTime(time);
+    localStorage.setItem("selectedEndTime", time);
+  };
+
+  const updateSelectedSlots = (slots) => {
+    setSelectedSlots(slots);
+    localStorage.setItem("selectedSlots", JSON.stringify(slots));
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 mt-14 p-4">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-7xl">
@@ -321,7 +376,7 @@ const BuySubscription = () => {
             <div className="bg-gray-50 p-6 rounded-xl">
               <DatePicker
                 selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                onChange={(date) => updateStartDate(date)}
                 inline
                 minDate={new Date()}
                 className="w-full scale-105 transform origin-top-left"
@@ -341,7 +396,7 @@ const BuySubscription = () => {
                 </label>
                 <select
                   value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
+                  onChange={(e) => updateStartTime(e.target.value)}
                   className="w-full p-3 border rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-blue-500 text-lg"
                 >
                   <option value="">Select start time</option>

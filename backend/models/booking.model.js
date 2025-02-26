@@ -50,6 +50,12 @@ const bookingSchema = new mongoose.Schema(
       default: "unpaid",
     },
 
+    subscriptionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subscription",
+      required: false,
+    },
+
     // paymentDetails: {
     //   transactionId: String,
     //   method: {

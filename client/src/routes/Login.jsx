@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { Mail, Lock } from "lucide-react"; // Importing Lucide icons
 
 export default function Login() {
-  const initialvalues = { email: "", password: "" };
+  const initialvalues = { email: "", password: "",role:"" };
   const [formvalues, setformvalues] = useState(initialvalues);
   const [formerrors, setformerrors] = useState({});
   const [submit, setsubmit] = useState(false);
@@ -29,6 +29,7 @@ export default function Login() {
     const formData = new FormData();
     formData.append("email", formvalues.email);
     formData.append("password", formvalues.password);
+    formData.append("role", formvalues.role);
 
     try {
       const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
@@ -104,6 +105,11 @@ export default function Login() {
       errors.password = "Password should not be less than 4 characters";
     }
 
+
+    if (!values.role) {
+      errors.role = "Role is required";
+    }
+
    
 
     return errors;
@@ -151,6 +157,40 @@ export default function Login() {
             />
           </div>
           <p className="text-red-500 text-sm">{formerrors.password}</p>
+        </div>
+
+            {/* Role Input */}
+            <div className="mb-4">
+          <label className="text-sm text-white">Role:</label>
+          <div className="flex items-center space-x-4 mt-2">
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="User"
+                name="role"
+                value="user"
+                onChange={change}
+                className="mr-2"
+              />
+              <label htmlFor="User" className="text-white">
+                User
+              </label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="Admin"
+                name="role"
+                value="admin"
+                onChange={change}
+                className="mr-2"
+              />
+              <label htmlFor="Admin" className="text-white">
+                Admin
+              </label>
+            </div>
+          </div>
+          <p className="text-red-500 text-sm">{formerrors.role}</p>
         </div>
 
         

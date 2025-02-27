@@ -11,7 +11,8 @@ export default function Signup() {
     fullname: "",
     email: "",
     password: "",
-    mobilenumber: ""
+    mobilenumber: "",
+    role:""
   };
 
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function Signup() {
     formData.append("email", formvalues.email);
     formData.append("mobilenumber", formvalues.mobilenumber);
     formData.append("password", formvalues.password);
+    formData.append("role", formvalues.role);
 
     try {
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
@@ -100,6 +102,10 @@ export default function Signup() {
       errors.mobilenumber = "Invalid mobile number";
     }
 
+    if (!values.role) {
+      errors.role = "Role Is Required";
+    }
+
   
 
     return errors;
@@ -110,7 +116,7 @@ export default function Signup() {
       <div className="flex justify-center items-center mt-[100px] lg:pt-[50px] lg:mb-[50px] ">
         <form
           onSubmit={handlesubmit}
-          className="w-[310px] h-[550px] lg:h-[600px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
+          className="w-[310px] h-[550px] lg:h-[700px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
         >
           <div className="text-center mb-6">
             <p className="text-[25px] font-bold text-white">Sign Up</p>
@@ -182,6 +188,36 @@ export default function Signup() {
               />
             </div>
             <p className="text-black">{formerrors.mobilenumber}</p>
+          </div>
+
+           {/* Role Input */}
+           <div className="mb-[20px]">
+            <label className="text-[18px] text-white">Role:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-2">
+              <input
+                type="radio"
+                id="User"
+                name="role"
+                value="user"
+                onChange={change}
+              />
+              <label for="html" className="text-white text-[18px]">
+                User
+              </label>
+
+              <input
+                type="radio"
+                id="Admin"
+                name="role"
+                value="admin"
+                className="lg:ml-4"
+                onChange={change}
+              />
+              <label for="html" className="text-white text-[18px]">
+                Admin
+              </label>
+            </div>
+            <p className="text-black">{formerrors.role}</p>
           </div>
 
           

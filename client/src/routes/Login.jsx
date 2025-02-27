@@ -26,73 +26,64 @@ export default function Login() {
     setformerrors(validate(formvalues));
     setsubmit(true);
 
+    const formData = new FormData();
+    formData.append("email", formvalues.email);
+    formData.append("password", formvalues.password);
+    formData.append("role", formvalues.role);
+
     try {
-        const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            withCredentials: false,
+      const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: false,
+      });
+
+      if (res.data.success) {
+        dispatch(setUser(res.data.user));
+        navigate("/");
+
+        // Success Toast
+        toast.success(res.data.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
         });
-
-        if (res.data.success) {
-            const user = res.data.user;
-
-            // Store user in redux (as you already do)
-            dispatch(setUser(user));
-
-            // Store user in localStorage so navbar can access it
-            localStorage.setItem("user", JSON.stringify(user));
-
-            // Navigate based on role
-            if (user.role === "owner") {
-                navigate("/turfform"); // Owner to add turf page
-            } else {
-                navigate("/"); // User to home page
-            }
-
-            // Success Toast
-            toast.success(res.data.message, {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
-
-        } else {
-            // Error Toast for unsuccessful login
-            toast.error(res.data.message || "Login failed. Please try again.", {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
-        }
+      } else {
+        // Error Toast for unsuccessful login
+        toast.error(res.data.message || "Login failed. Please try again.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     } catch (error) {
-        // Error Toast for server or network errors
-        toast.error(
-            "An error occurred. Please check your credentials and try again.",
-            {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            }
-        );
+      // Error Toast for server or network errors
+      toast.error(
+        "An error occurred. Please check your credentials and try again.",
+        {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
     }
-};
-
+  };
 
   useEffect(() => {
     if (Object.keys(formerrors).length === 0 && submit) console.log(formvalues);
@@ -195,7 +186,7 @@ export default function Login() {
                 className="mr-2"
               />
               <label htmlFor="Owner" className="text-white">
-              Owner
+                Owner
               </label>
             </div>
           </div>

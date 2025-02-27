@@ -18,6 +18,7 @@ import Subscription from "./routes/Subscription";
 import CheckOut from "./components/CheckOut";
 import DisplayBookings from "./components/DisplayBookings";
 import BuySubsciption from "./routes/BuySubsciption";
+import TurfForm from "./routes/turfOwner/turfForm";
 
 function App() {
   return (
@@ -41,6 +42,9 @@ function App() {
         <Route path="/checkout" element={<CheckOut />} />
         <Route path="/displaybookings" element={<DisplayBookings />} />
         <Route path="/turfs/:id/buysubscription" element={<BuySubsciption />} />
+        <Route path="/turfform" element={<TurfForm />} />
+
+        
       </Routes>
     </BrowserRouter>
   );

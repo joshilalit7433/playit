@@ -207,14 +207,14 @@ export default function Signup() {
 
               <input
                 type="radio"
-                id="Admin"
+                id="Owner"
                 name="role"
-                value="admin"
+                value="owner"
                 className="lg:ml-4"
                 onChange={change}
               />
-              <label for="html" className="text-white text-[18px]">
-                Admin
+              <label htmlFor="Owner" className="text-white text-[18px]">
+                Owner
               </label>
             </div>
             <p className="text-black">{formerrors.role}</p>

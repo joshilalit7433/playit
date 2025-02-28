@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { USER_API_END_POINT } from "../utils/constant.js";
 import { setUser } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
-import { Mail, Lock } from "lucide-react"; 
+import { Mail, Lock } from "lucide-react";
 
 export default function Login() {
   const initialValues = { email: "", password: "", role: "" };
@@ -66,11 +66,14 @@ export default function Login() {
         });
       }
     } catch (error) {
-      toast.error("An error occurred. Please check your credentials and try again.", {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "dark",
-      });
+      toast.error(
+        "An error occurred. Please check your credentials and try again.",
+        {
+          position: "top-center",
+          autoClose: 5000,
+          theme: "dark",
+        }
+      );
     }
   };
 
@@ -80,8 +83,7 @@ export default function Login() {
 
     if (!values.email) {
       errors.email = "Email is required";
-    }
-     else if (!emailRegex.test(values.email)) {
+    } else if (!emailRegex.test(values.email)) {
       errors.email = "Invalid email format";
     }
 
@@ -99,10 +101,10 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+    <div className="flex  justify-center items-center min-h-screen bg-gray-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-[#31a022] p-6 rounded-lg shadow-lg"
+        className="w-full  max-w-md bg-[#31a022] p-6 rounded-lg shadow-lg"
       >
         <div className="text-center mb-6">
           <p className="text-2xl font-bold text-white">Login</p>

@@ -39,6 +39,11 @@ const turfSchema = new mongoose.Schema(
     linkes: {
       type: String, // Link field
     },
+
+    state: {
+      type: Boolean,
+      default: false, // true means turf is active/available, false means inactive/unavailable
+    },
   },
   { timestamps: true }
 );

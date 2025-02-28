@@ -20,6 +20,7 @@ import DisplayBookings from "./components/DisplayBookings";
 import BuySubsciption from "./routes/BuySubsciption";
 import TurfForm from "./routes/turfOwner/turfForm";
 import AdminDashboard from "./components/AdminDashboard";
+import AdminTurfDetails from "./components/AdminTurfDetails";
 
 function App() {
   return (
@@ -45,8 +46,7 @@ function App() {
         <Route path="/turfs/:id/buysubscription" element={<BuySubsciption />} />
         <Route path="/turfform" element={<TurfForm />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-        
+        <Route path="/admin/dashboard/:id" element={<AdminTurfDetails />} />
       </Routes>
     </BrowserRouter>
   );

@@ -16,7 +16,11 @@ export default function Turf({ filters }) {
     const fetchTurfs = async () => {
       try {
         const response = await axios.get(`${TURF_API_END_POINT}/getTurf`);
-        setTurfs(response.data.turfs);
+        // Filter turfs with state=true before setting state
+        const approvedTurfs = response.data.turfs.filter(
+          (turf) => turf.state === true
+        );
+        setTurfs(approvedTurfs);
       } catch (error) {
         console.error("Error fetching turfs:", error);
         if (error.response) {

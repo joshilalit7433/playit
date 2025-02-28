@@ -53,6 +53,10 @@ export default function Navbar() {
   const userLinks = [
     { id: 1, name: "Home", link: "/" },
     { id: 2, name: "Turfs", link: "/turfs" },
+    // Add admin dashboard link if user is admin
+    ...(user?.role === "admin"
+      ? [{ id: 3, name: "Dashboard", link: "/admin/dashboard" }]
+      : []),
   ];
 
   return (
@@ -145,7 +149,11 @@ export default function Navbar() {
               onClick={toggleMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-green-700"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>

@@ -44,6 +44,12 @@ const turfSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // true means turf is active/available, false means inactive/unavailable
     },
+
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -29,12 +29,13 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    // This will store the ID of the turf document the owner created
-    ownedTurf: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Turf", // Reference to the Turf model
-      default: null, // Regular users and admins won't have a turf
-    },
+    // Change from single reference to array of references
+    ownedTurfs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Turf", // Reference to the Turf model
+      },
+    ],
   },
   { timestamps: true }
 );

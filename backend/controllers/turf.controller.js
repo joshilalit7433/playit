@@ -1,4 +1,5 @@
 import { Turf } from "../models/turf.model.js";
+import { User } from "../models/user.model.js";
 
 export const postTurf = async (req, res) => {
   try {
@@ -41,7 +42,13 @@ export const postTurf = async (req, res) => {
       linkes,
       address,
       state,
+      owner: req.user._id,
     });
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $push: { ownedTurfs: turf._id },
+    });
+
     return res.status(201).json({
       message: "New turf created successfully.",
       turf,
@@ -49,6 +56,10 @@ export const postTurf = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Error creating turf",
+      success: false,
+    });
   }
 };
 
@@ -128,12 +139,6 @@ export const approveTurf = async (req, res) => {
       { state: true },
       { new: true }
     );
-    if (!turf) {
-      return res.status(404).json({
-        message: "Turf not found",
-        success: false,
-      });
-    }
     return res.status(200).json({
       message: "Turf approved successfully",
       turf,
@@ -149,13 +154,7 @@ export const approveTurf = async (req, res) => {
 
 export const rejectTurf = async (req, res) => {
   try {
-    const turf = await Turf.findByIdAndDelete(req.params.id);
-    if (!turf) {
-      return res.status(404).json({
-        message: "Turf not found",
-        success: false,
-      });
-    }
+    await Turf.findByIdAndDelete(req.params.id);
     return res.status(200).json({
       message: "Turf rejected and deleted successfully",
       success: true,

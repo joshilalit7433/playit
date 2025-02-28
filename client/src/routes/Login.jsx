@@ -6,44 +6,49 @@ import "react-toastify/dist/ReactToastify.css";
 import { USER_API_END_POINT } from "../utils/constant.js";
 import { setUser } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
-import { Mail, Lock } from "lucide-react"; // Importing Lucide icons
+import { Mail, Lock } from "lucide-react"; 
 
 export default function Login() {
-  const initialvalues = { email: "", password: "",role:"" };
-  const [formvalues, setformvalues] = useState(initialvalues);
-  const [formerrors, setformerrors] = useState({});
-  const [submit, setsubmit] = useState(false);
+  const initialValues = { email: "", password: "", role: "" };
+  const [formValues, setFormValues] = useState(initialValues);
+  const [formErrors, setFormErrors] = useState({});
+  const [submit, setSubmit] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const change = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setformvalues({ ...formvalues, [name]: value });
+    setFormValues({ ...formValues, [name]: value });
   };
 
-  const handlesubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setformerrors(validate(formvalues));
-    setsubmit(true);
+    const errors = validate(formValues);
+    setFormErrors(errors);
+    setSubmit(true);
 
-    const formData = new FormData();
-    formData.append("email", formvalues.email);
-    formData.append("password", formvalues.password);
-    formData.append("role", formvalues.role);
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
 
     try {
-      const res = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await axios.post(`${USER_API_END_POINT}/login`, formValues, {
+        headers: { "Content-Type": "application/json" },
         withCredentials: false,
       });
 
       if (res.data.success) {
         dispatch(setUser(res.data.user));
-        navigate("/");
 
-        // Success Toast
+        // Redirect based on role
+        if (res.data.user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (res.data.user.role === "owner") {
+          navigate("/turfform");
+        } else {
+          navigate("/");
+        }
+
         toast.success(res.data.message, {
           position: "top-center",
           autoClose: 5000,
@@ -51,66 +56,44 @@ export default function Login() {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          progress: undefined,
           theme: "dark",
         });
       } else {
-        // Error Toast for unsuccessful login
         toast.error(res.data.message || "Login failed. Please try again.", {
           position: "top-center",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           theme: "dark",
         });
       }
     } catch (error) {
-      // Error Toast for server or network errors
-      toast.error(
-        "An error occurred. Please check your credentials and try again.",
-        {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        }
-      );
+      toast.error("An error occurred. Please check your credentials and try again.", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "dark",
+      });
     }
   };
 
-  useEffect(() => {
-    if (Object.keys(formerrors).length === 0 && submit) console.log(formvalues);
-  }, [formerrors]);
-
   const validate = (values) => {
     const errors = {};
-    const regx = /^\w+([.-]?\w+)@\w+([.-]?\w+)(\.\w{2,3})+$/i;
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
     if (!values.email) {
       errors.email = "Email is required";
-    } else if (!regx.test(values.email)) {
-      errors.email = "This is not a valid email format";
+    }
+     else if (!emailRegex.test(values.email)) {
+      errors.email = "Invalid email format";
     }
 
     if (!values.password) {
       errors.password = "Password is required";
     } else if (values.password.length < 4) {
-      errors.password = "Password should not be less than 4 characters";
+      errors.password = "Password must be at least 4 characters";
     }
-
 
     if (!values.role) {
       errors.role = "Role is required";
     }
-
-   
 
     return errors;
   };
@@ -118,11 +101,11 @@ export default function Login() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
       <form
-        onSubmit={handlesubmit}
+        onSubmit={handleSubmit}
         className="w-full max-w-md bg-[#31a022] p-6 rounded-lg shadow-lg"
       >
         <div className="text-center mb-6">
-          <p className="text-2xl font-bold text-white">Customer Login</p>
+          <p className="text-2xl font-bold text-white">Login</p>
         </div>
 
         {/* Email Input */}
@@ -132,14 +115,14 @@ export default function Login() {
             <Mail className="text-white mr-2" />
             <input
               type="email"
-              onChange={change}
-              placeholder="Email"
               name="email"
+              placeholder="Email"
+              value={formValues.email}
+              onChange={handleChange}
               className="bg-transparent w-full text-white focus:outline-none"
-              value={formvalues.email}
             />
           </div>
-          <p className="text-red-500 text-sm">{formerrors.email}</p>
+          <p className="text-red-500 text-sm">{formErrors.email}</p>
         </div>
 
         {/* Password Input */}
@@ -149,55 +132,41 @@ export default function Login() {
             <Lock className="text-white mr-2" />
             <input
               type="password"
-              onChange={change}
-              placeholder="Password"
               name="password"
+              placeholder="Password"
+              value={formValues.password}
+              onChange={handleChange}
               className="bg-transparent w-full text-white focus:outline-none"
-              value={formvalues.password}
             />
           </div>
-          <p className="text-red-500 text-sm">{formerrors.password}</p>
+          <p className="text-red-500 text-sm">{formErrors.password}</p>
         </div>
 
-            {/* Role Input */}
-            <div className="mb-4">
+        {/* Role Input */}
+        <div className="mb-4">
           <label className="text-sm text-white">Role:</label>
           <div className="flex items-center space-x-4 mt-2">
-            <div className="flex items-center">
-              <input
-                type="radio"
-                id="User"
-                name="role"
-                value="user"
-                onChange={change}
-                className="mr-2"
-              />
-              <label htmlFor="User" className="text-white">
-                User
-              </label>
-            </div>
-            <div className="flex items-center">
-              <input
-                type="radio"
-                id="Owner"
-                name="role"
-                value="owner"
-                onChange={change}
-                className="mr-2"
-              />
-              <label htmlFor="Owner" className="text-white">
-                Owner
-              </label>
-            </div>
+            {["user", "owner", "admin"].map((role) => (
+              <div key={role} className="flex items-center">
+                <input
+                  type="radio"
+                  id={role}
+                  name="role"
+                  value={role}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label htmlFor={role} className="text-white capitalize">
+                  {role}
+                </label>
+              </div>
+            ))}
           </div>
-          <p className="text-red-500 text-sm">{formerrors.role}</p>
+          <p className="text-red-500 text-sm">{formErrors.role}</p>
         </div>
 
-        
-
-        {/* Remember Me and Forgot Password */}
+        {/* Forgot Password */}
         <div className="flex justify-between text-white text-sm mb-6">
-          
           <Link to="/forgot-password" className="underline">
             Forgot Password?
           </Link>
@@ -210,7 +179,7 @@ export default function Login() {
           </button>
         </div>
 
-        {/* Don't have an account? */}
+        {/* Signup Link */}
         <div className="text-center mt-4">
           <Link to="/signup" className="text-white underline">
             Don't have an account?

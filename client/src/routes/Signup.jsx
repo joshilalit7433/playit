@@ -216,7 +216,9 @@ export default function Signup() {
               <label htmlFor="Owner" className="text-white text-[18px]">
                 Owner
               </label>
+             
             </div>
+            
             <p className="text-black">{formerrors.role}</p>
           </div>
 

@@ -19,6 +19,7 @@ import CheckOut from "./components/CheckOut";
 import DisplayBookings from "./components/DisplayBookings";
 import BuySubsciption from "./routes/BuySubsciption";
 import TurfForm from "./routes/turfOwner/turfForm";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path="/displaybookings" element={<DisplayBookings />} />
         <Route path="/turfs/:id/buysubscription" element={<BuySubsciption />} />
         <Route path="/turfform" element={<TurfForm />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
         
       </Routes>

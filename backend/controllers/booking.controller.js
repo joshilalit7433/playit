@@ -115,7 +115,7 @@ export const displayTurfBookings = async (req, res) => {
     const bookings = await Booking.find({ turfId })
       .populate({
         path: "userId",
-        select: "name email phone", // Include relevant user fields
+        select: "fullname email mobilenumber", // Changed to match frontend field names
       })
       .sort({ bookingDate: -1 }); // Sort by booking date, most recent first
 

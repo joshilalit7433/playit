@@ -21,8 +21,11 @@ import BuySubsciption from "./routes/BuySubsciption";
 import TurfForm from "./routes/turfOwner/turfForm";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminTurfDetails from "./components/AdminTurfDetails";
-
+import DisplayTurfBooking from "./routes/turfOwner/DisplayTurfBooking";
+import DisplayTOBooking from "./routes/turfOwner/DisplayTOBooking";
 function App() {
+  
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -47,6 +50,8 @@ function App() {
         <Route path="/turfform" element={<TurfForm />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/dashboard/:id" element={<AdminTurfDetails />} />
+        <Route path="/turf-bookings" element={<DisplayTOBooking />} />
+        <Route path="/turf-bookings/:turfId" element={<DisplayTurfBooking />} />
       </Routes>
     </BrowserRouter>
   );

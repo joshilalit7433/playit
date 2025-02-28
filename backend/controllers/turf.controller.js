@@ -14,6 +14,7 @@ export const postTurf = async (req, res) => {
       linkes,
       address,
       state,
+      owner,
     } = req.body;
 
     if (
@@ -42,12 +43,14 @@ export const postTurf = async (req, res) => {
       linkes,
       address,
       state,
-      owner: req.user._id,
+      owner,
     });
 
-    await User.findByIdAndUpdate(req.user._id, {
-      $push: { ownedTurfs: turf._id },
-    });
+    if (owner) {
+      await User.findByIdAndUpdate(owner, {
+        $push: { ownedTurfs: turf._id },
+      });
+    }
 
     return res.status(201).json({
       message: "New turf created successfully.",
@@ -113,21 +116,33 @@ export const getPendingTurfs = async (req, res) => {
 
 export const getTurfById = async (req, res) => {
   try {
-    const turf = await Turf.findById(req.params.id);
-    if (!turf) {
-      return res.status(404).json({
-        message: "Turf not found",
+    const { id } = req.params;
+    
+    if (!id) {
+      return res.status(400).json({
         success: false,
+        message: "Turf ID is required"
       });
     }
+    
+    const turf = await Turf.findById(id);
+    
+    if (!turf) {
+      return res.status(404).json({
+        success: false,
+        message: "Turf not found"
+      });
+    }
+    
     return res.status(200).json({
-      turf,
       success: true,
+      turf
     });
   } catch (error) {
+    console.error("Error fetching turf:", error);
     return res.status(500).json({
-      message: "Error fetching turf details",
       success: false,
+      message: "Failed to fetch turf details"
     });
   }
 };
@@ -163,6 +178,78 @@ export const rejectTurf = async (req, res) => {
     return res.status(500).json({
       message: "Error rejecting turf",
       success: false,
+    });
+  }
+};
+
+export const getTurfsByOwner = async (req, res) => {
+  try {
+    const { ownerId } = req.params;
+    
+    if (!ownerId) {
+      return res.status(400).json({
+        message: "Owner ID is required",
+        success: false,
+      });
+    }
+    
+    const turfs = await Turf.find({ owner: ownerId });
+    
+    return res.status(200).json({
+      success: true,
+      turfs
+    });
+  } catch (error) {
+    console.error("Error fetching owner's turfs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch owner's turfs"
+    });
+  }
+};
+export const updateBookingStatus = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { status } = req.body;
+    
+    if (!bookingId || !status) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking ID and status are required"
+      });
+    }
+    
+    const validStatuses = ["confirmed", "cancelled", "pending"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value"
+      });
+    }
+    
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { status },
+      { new: true }
+    );
+    
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found"
+      });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: `Booking ${status} successfully`,
+      booking
+    });
+  } catch (error) {
+    console.error("Error updating booking status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update booking status"
     });
   }
 };

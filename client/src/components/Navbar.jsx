@@ -84,12 +84,15 @@ export default function Navbar() {
           </div>
 
           <div className="hidden sm:flex sm:items-center sm:space-x-4">
-            <Link
-              to="/subscription"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold transition duration-150 ease-in-out"
-            >
-              GET PLAYit PLUS
-            </Link>
+            {/* Hide GET PLAYit PLUS for owner */}
+            {user?.role !== "owner" && (
+              <Link
+                to="/subscription"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold transition duration-150 ease-in-out"
+              >
+                GET PLAYit PLUS
+              </Link>
+            )}
 
             {!user ? (
               !isLoginOrSignupPage && (
@@ -163,13 +166,18 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
-            <Link
-              to="/subscription"
-              className="block text-center bg-blue-500 hover:bg-blue-600 text-white py-3"
-              onClick={toggleMenu}
-            >
-              GET PLAYit PLUS
-            </Link>
+
+            {/* Hide GET PLAYit PLUS for owner */}
+            {user?.role !== "owner" && (
+              <Link
+                to="/subscription"
+                className="block text-center bg-blue-500 hover:bg-blue-600 text-white py-3"
+                onClick={toggleMenu}
+              >
+                GET PLAYit PLUS
+              </Link>
+            )}
+
             {!user && !isLoginOrSignupPage && (
               <Link
                 to="/login"

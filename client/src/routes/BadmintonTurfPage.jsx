@@ -54,7 +54,7 @@ const BadmintonTurfPage = () => {
   });
 
   return (
-    <div className="lg:flex lg:flex-row">
+    <div className="lg:flex lg:flex-row mt-[70px]">
       {/* Filter Component */}
       <div className="lg:w-[200px]">
         <SportsListFilter onFilterChange={handleFilterChange} />

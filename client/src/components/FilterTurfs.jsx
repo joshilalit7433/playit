@@ -35,7 +35,12 @@ const FilterTurfs = ({ onFilterChange }) => {
   const [activeTab, setActiveTab] = useState(null);
 
   const handleFilterChange = (filterType, value) => {
-    const updatedFilters = { ...selectedFilters, [filterType]: value };
+    let updatedValue = value;
+    // Convert sports value to lowercase to match backend storage format
+    if (filterType === "Sports" && value) {
+      updatedValue = value.toLowerCase();
+    }
+    const updatedFilters = { ...selectedFilters, [filterType]: updatedValue };
     setSelectedFilters(updatedFilters);
     onFilterChange(updatedFilters);
   };
@@ -66,7 +71,9 @@ const FilterTurfs = ({ onFilterChange }) => {
                   name={data.filterType}
                   value={item}
                   onChange={() => handleFilterChange(data.filterType, item)}
-                  checked={selectedFilters[data.filterType] === item}
+                  checked={data.filterType === "Sports" 
+                    ? selectedFilters[data.filterType] === item.toLowerCase()
+                    : selectedFilters[data.filterType] === item}
                   className="form-radio h-4 w-4 text-[#31a022]"
                 />
                 <label

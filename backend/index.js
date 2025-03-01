@@ -1,4 +1,3 @@
-// const express=require("express")  // old method
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
@@ -9,52 +8,51 @@ import turfRoute from "./routes/turf.route.js";
 import subcriptionRoute from "./routes/subcription.route.js";
 import bookingRoute from "./routes/booking.route.js";
 import paymentRoute from "./routes/payment.routes.js";
-import Stripe from "stripe";
 import subscriptionRoute from "./routes/subscription.routes.js";
 
-dotenv.config({});
+dotenv.config();
+
 const app = express();
 
-//middleware
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-const coroptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
+
+const corsOptions = {
+    origin: "http://localhost:3000",
+    credentials: true,
 };
+app.use(cors(corsOptions));
 
-app.use(cors(coroptions));
+// Set port
+const PORT = process.env.PORT || 8000;
 
-const PORT = process.env.PORT || 3000;
+// Connect to database
+connectdb();
 
-//API's
+// API Routes
 app.use("/api/v1/user", userRoute);
-
-// 'http://localhost:8000/api/v1/user/register'
-// 'http://localhost:8000/api/v1/user/login'
-// 'http://localhost:8000/api/v1/user/profile/update'
-
 app.use("/api/v1/turf", turfRoute);
-
-// 'http://localhost:8000/api/v1/turf/postTurf'
-// 'http://localhost:8000/api/v1/turf/getTurf'
-
 app.use("/api/v1/subcription", subcriptionRoute);
-
-// http://localhost:8000/api/v1/subcription
-
 app.use("/api/v1/booking", bookingRoute);
-
-// http://localhost:8000/api/v1/booking
-
 app.use("/api/v1/payment", paymentRoute);
-
-// http://localhost:8000/api/v1/payment
-
 app.use("/api/v1/subscription", subscriptionRoute);
 
-app.listen(PORT, () => {
-  connectdb();
-  console.log(`server running on port ${PORT}`);
+// Start server and store instance
+const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
+
+// Graceful shutdown to avoid EADDRINUSE on restart
+const cleanup = () => {
+    console.log("Shutting down server...");
+    server.close(() => {
+        console.log("Server closed gracefully.");
+        process.exit(0);
+    });
+};
+
+// Handle process termination signals
+process.on("SIGTERM", cleanup);  // Nodemon restart triggers this
+process.on("SIGINT", cleanup);   // Ctrl+C triggers this

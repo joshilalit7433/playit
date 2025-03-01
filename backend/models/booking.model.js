@@ -55,6 +55,12 @@ const bookingSchema = new mongoose.Schema(
       ref: "Subscription",
       required: false,
     },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
 
     // paymentDetails: {
     //   transactionId: String,

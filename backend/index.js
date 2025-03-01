@@ -50,7 +50,7 @@ app.use("/api/v1/booking", bookingRoute);
 
 app.use("/api/v1/payment", paymentRoute);
 
-// http://localhost:8000/api/v1/postPayment
+// http://localhost:8000/api/v1/payment
 
 app.use("/api/v1/subscription", subscriptionRoute);
 

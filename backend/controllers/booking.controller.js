@@ -131,3 +131,61 @@ export const displayTurfBookings = async (req, res) => {
     return res.status(500).json({ message: "Failed to fetch turf bookings." });
   }
 };
+
+
+
+// ... existing controller functions ...
+
+// @desc    Rate a booking
+// @route   POST /api/v1/booking/rate/:bookingId
+// @access  Private
+export const rateBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { rating } = req.body;
+
+    // Validate rating
+    if (rating < 0 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating must be between 0 and 5",
+      });
+    }
+
+    // Find the booking
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // Check if the booking belongs to the user
+    if (booking.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to rate this booking",
+      });
+    }
+
+    // Update the booking with the rating
+    booking.rating = rating;
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Rating updated successfully",
+      data: booking,
+    });
+  } catch (error) {
+    console.error("Error in rateBooking:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating rating",
+      error: error.message,
+    });
+  }
+};
+

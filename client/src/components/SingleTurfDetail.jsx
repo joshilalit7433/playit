@@ -118,14 +118,12 @@ const SingleTurfDetail = () => {
 
       if (formattedBookedDate !== date) return false;
 
-      // Convert current slot time to minutes for comparison
       const [slotTime, slotPeriod] = time.split(" ");
       const [slotHours, slotMinutes] = slotTime.split(":").map(Number);
       let slotTotalMinutes = slotHours * 60 + slotMinutes;
       if (slotPeriod === "PM" && slotHours !== 12) slotTotalMinutes += 12 * 60;
       if (slotPeriod === "AM" && slotHours === 12) slotTotalMinutes = 0;
 
-      // Convert booking start time to minutes
       const [startTime, startPeriod] = slot.startTime.split(" ");
       const [startHours, startMinutes] = startTime.split(":").map(Number);
       let startTotalMinutes = startHours * 60 + startMinutes;
@@ -133,14 +131,12 @@ const SingleTurfDetail = () => {
         startTotalMinutes += 12 * 60;
       if (startPeriod === "AM" && startHours === 12) startTotalMinutes = 0;
 
-      // Convert booking end time to minutes
       const [endTime, endPeriod] = slot.endTime.split(" ");
       const [endHours, endMinutes] = endTime.split(":").map(Number);
       let endTotalMinutes = endHours * 60 + endMinutes;
       if (endPeriod === "PM" && endHours !== 12) endTotalMinutes += 12 * 60;
       if (endPeriod === "AM" && endHours === 12) endTotalMinutes = 0;
 
-      // Check if current slot time falls within the booking period
       return (
         slotTotalMinutes >= startTotalMinutes &&
         slotTotalMinutes <= endTotalMinutes
@@ -207,7 +203,6 @@ const SingleTurfDetail = () => {
       return;
     }
 
-    // Parse the date components
     const [day, monthStr] = startSlot.date.split(" ");
     const months = {
       Jan: 0,
@@ -224,11 +219,9 @@ const SingleTurfDetail = () => {
       Dec: 11,
     };
 
-    // Parse the time components
     const [timeStr, period] = startSlot.time.split(" ");
     const [hours, minutes] = timeStr.split(":").map(Number);
 
-    // Convert to 24-hour format
     let hours24 = hours;
     if (period === "PM" && hours !== 12) {
       hours24 += 12;
@@ -236,7 +229,6 @@ const SingleTurfDetail = () => {
       hours24 = 0;
     }
 
-    // Create date object with current year
     const currentYear = new Date().getFullYear();
     const date = new Date(
       currentYear,
@@ -255,7 +247,6 @@ const SingleTurfDetail = () => {
   };
 
   const isSlotInPast = (date, time) => {
-    // Parse the date components
     const [day, monthStr] = date.split(" ");
     const months = {
       Jan: 0,
@@ -272,16 +263,13 @@ const SingleTurfDetail = () => {
       Dec: 11,
     };
 
-    // Parse the time components
     const [timeStr, period] = time.split(" ");
     const [hours, minutes] = timeStr.split(":").map(Number);
 
-    // Convert to 24-hour format
     let hours24 = hours;
     if (period === "PM" && hours !== 12) hours24 += 12;
     if (period === "AM" && hours === 12) hours24 = 0;
 
-    // Create date object for the slot
     const currentYear = new Date().getFullYear();
     const slotDate = new Date(
       currentYear,
@@ -291,11 +279,13 @@ const SingleTurfDetail = () => {
       minutes
     );
 
-    // Get current date/time
     const now = new Date();
 
     return slotDate < now;
   };
+
+  // Check if the user is an owner
+  const isOwner = user?.role === "owner";
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6 lg:mt-[100px]">
@@ -401,19 +391,25 @@ const SingleTurfDetail = () => {
         </table>
       </div>
 
-      <div className="flex justify-center lg:gap-x-10 mt-6">
-        <button
-          onClick={handleProceedToBooking}
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          {user ? "Proceed to Booking" : "Please log in to book"}
-        </button>
-        <Link to={`/turfs/${turf._id}/buysubscription`} state={{ turf: turf }}>
-          <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
-            Buy Subscription
+      {/* Conditionally render buttons only if the user is not an owner */}
+      {!isOwner && (
+        <div className="flex justify-center lg:gap-x-10 mt-6">
+          <button
+            onClick={handleProceedToBooking}
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+          >
+            {user ? "Proceed to Booking" : "Please log in to book"}
           </button>
-        </Link>
-      </div>
+          <Link
+            to={`/turfs/${turf._id}/buysubscription`}
+            state={{ turf: turf }}
+          >
+            <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+              Buy Subscription
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

@@ -59,6 +59,9 @@ export default function Navbar() {
       : []),
   ];
 
+  // Link for owners
+  const ownerLinks = [{ id: 1, name: "Add Turf", link: "/turfform" }];
+
   return (
     <nav className="bg-green-600 shadow-lg fixed top-0 left-0 right-0 z-50">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,6 +80,16 @@ export default function Navbar() {
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
             {user?.role !== "owner" &&
               userLinks.map((link) => (
+                <Link
+                  key={link.id}
+                  to={link.link}
+                  className="text-white hover:bg-green-700 hover:text-white px-3 py-2 rounded-md text-lg font-medium transition duration-150 ease-in-out"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            {user?.role === "owner" &&
+              ownerLinks.map((link) => (
                 <Link
                   key={link.id}
                   to={link.link}
@@ -165,6 +178,17 @@ export default function Navbar() {
           <div className="space-y-1">
             {user?.role !== "owner" &&
               userLinks.map((link) => (
+                <Link
+                  key={link.id}
+                  to={link.link}
+                  className="block px-4 py-3 text-white hover:bg-green-700"
+                  onClick={toggleMenu}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            {user?.role === "owner" &&
+              ownerLinks.map((link) => (
                 <Link
                   key={link.id}
                   to={link.link}

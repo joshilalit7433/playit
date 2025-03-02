@@ -3,11 +3,39 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { TURF_API_END_POINT } from "../utils/constant.js";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const AdminTurfDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [turf, setTurf] = useState(null);
   const [loading, setLoading] = useState(true);
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    const checkAdminAccess = async () => {
+      try {
+        // Check if user exists and has admin role
+        if (!user || user.role !== "admin") {
+          toast.error("You don't have permission to access this page", {
+            position: "top-center",
+            theme: "dark",
+          });
+          navigate("/login");
+          return;
+        }
+      } catch (error) {
+        toast.error("Authentication failed", {
+          position: "top-center",
+          theme: "dark",
+        });
+        navigate("/login");
+      }
+    };
+
+    checkAdminAccess();
+  }, [navigate, user]);
 
   useEffect(() => {
     const fetchTurfDetails = async () => {

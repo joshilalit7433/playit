@@ -41,7 +41,7 @@ const DisplayTurfBooking = () => {
         }
 
         const turfData = turfResponse.data.turf;
-        
+
         // Verify that the current user is the owner of this turf
         if (turfData.owner !== user._id) {
           setError("You don't have permission to view these bookings");
@@ -61,7 +61,7 @@ const DisplayTurfBooking = () => {
         }
       } catch (err) {
         console.error("Error fetching data:", err);
-        setError("Failed to fetch data. Please try again later.");
+        setError("No Bookings Found");
         toast.error("Failed to fetch data", {
           position: "top-center",
           theme: "dark",
@@ -79,17 +79,17 @@ const DisplayTurfBooking = () => {
       const response = await axios.patch(
         `http://localhost:8000/api/v1/booking/update-booking-status/${bookingId}`,
         {
-          status: newStatus
+          status: newStatus,
         },
         { withCredentials: true }
       );
 
       if (response.data.success) {
         // Update the booking in the state
-        setBookings(prevBookings => 
-          prevBookings.map(booking => 
-            booking._id === bookingId 
-              ? { ...booking, status: newStatus } 
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking._id === bookingId
+              ? { ...booking, status: newStatus }
               : booking
           )
         );
@@ -113,12 +113,22 @@ const DisplayTurfBooking = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <button 
-              onClick={() => navigate(-1)} 
+            <button
+              onClick={() => navigate(-1)}
               className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
             >
-              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-5 h-5 mr-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
               Back to My Turfs
             </button>
@@ -142,13 +152,22 @@ const DisplayTurfBooking = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Customer
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Date & Time
                     </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
                       Payment
                     </th>
                   </tr>
@@ -198,7 +217,9 @@ const DisplayTurfBooking = () => {
           </div>
         ) : (
           <div className="bg-white p-8 rounded-lg shadow-md text-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">No Bookings Found</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+              No Bookings Found
+            </h2>
             <p className="text-gray-600">
               There are currently no bookings for this turf.
             </p>

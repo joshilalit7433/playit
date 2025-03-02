@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const DisplayTOBooking = () => {
   const { user } = useSelector((store) => store.auth);
   const [ownedTurfs, setOwnedTurfs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const fetchOwnedTurfs = async () => {
@@ -19,11 +20,10 @@ const DisplayTOBooking = () => {
           return;
         }
 
-        // Fetch all turfs owned by this user
         const turfsResponse = await axios.get(
           `http://localhost:8000/api/v1/turf/owner-turfs/${user._id}`
         );
-        
+
         if (turfsResponse.data.success) {
           setOwnedTurfs(turfsResponse.data.turfs);
         } else {
@@ -44,19 +44,22 @@ const DisplayTOBooking = () => {
     fetchOwnedTurfs();
   }, [user]);
 
+  // Function to handle navigation to turf details
+  const handleViewDetails = (turf) => {
+    navigate(`/turfs/${turf._id}`, { state: { turf } });
+  };
+
   return (
     <div className="mt-10 bg-gray-100 min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Your Turfs
-          </h1>
-          <Link 
-            to="/turfForm" 
+          <h1 className="text-3xl font-bold text-gray-800">Your Turfs</h1>
+          <button
+            onClick={() => navigate("/turfForm")}
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition duration-200"
           >
             Add New Turf
-          </Link>
+          </button>
         </div>
 
         {loading ? (
@@ -76,7 +79,10 @@ const DisplayTOBooking = () => {
               >
                 <div className="h-48 overflow-hidden">
                   <img
-                    src={turf.images || "https://via.placeholder.com/400x200?text=No+Image"}
+                    src={
+                      turf.images ||
+                      "https://via.placeholder.com/400x200?text=No+Image"
+                    }
                     alt={turf.name}
                     className="w-full h-full object-cover"
                   />
@@ -86,17 +92,19 @@ const DisplayTOBooking = () => {
                     <h2 className="text-xl font-bold text-gray-800 mb-2">
                       {turf.name}
                     </h2>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      turf.state ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        turf.state
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
                       {turf.state ? "Approved" : "Pending Approval"}
                     </span>
                   </div>
-                  
-                  <p className="text-gray-600 mb-4">
-                    {turf.location}
-                  </p>
-                  
+
+                  <p className="text-gray-600 mb-4">{turf.location}</p>
+
                   <div className="flex justify-between items-center mb-4">
                     <p className="text-gray-700 font-medium">
                       ₹{turf.price}/hour
@@ -105,21 +113,21 @@ const DisplayTOBooking = () => {
                       {turf.sports_type}
                     </p>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
-                    <Link 
-                      to={`/turf-details/${turf._id}`}
+                    <button
+                      onClick={() => handleViewDetails(turf)}
                       className="text-blue-500 hover:text-blue-700"
                     >
                       View Details
-                    </Link>
-                    
-                    <Link 
-                      to={`/turf-bookings/${turf._id}`}
+                    </button>
+
+                    <button
+                      onClick={() => navigate(`/turf-bookings/${turf._id}`)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm transition duration-200"
                     >
                       View Bookings
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -127,16 +135,19 @@ const DisplayTOBooking = () => {
           </div>
         ) : (
           <div className="bg-white p-8 rounded-lg shadow-md text-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">No Turfs Found</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+              No Turfs Found
+            </h2>
             <p className="text-gray-600 mb-6">
-              You haven't created any turfs yet. Start by adding your first turf.
+              You haven't created any turfs yet. Start by adding your first
+              turf.
             </p>
-            <Link 
-              to="/add-turf" 
+            <button
+              onClick={() => navigate("/add-turf")}
               className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200 inline-block"
             >
               Add Your First Turf
-            </Link>
+            </button>
           </div>
         )}
       </div>

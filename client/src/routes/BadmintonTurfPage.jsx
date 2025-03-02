@@ -10,8 +10,8 @@ const BadmintonTurfPage = () => {
   const [filters, setFilters] = useState({ Location: "", Price: "" });
   const navigate = useNavigate();
 
-   // Function to normalize location (strip "East", "West", etc.)
-   const normalizeLocation = (location) => {
+  // Function to normalize location (strip "East", "West", etc.)
+  const normalizeLocation = (location) => {
     return location.split(" ")[0].toLowerCase(); // Extract base location
   };
 
@@ -20,10 +20,13 @@ const BadmintonTurfPage = () => {
       try {
         const response = await axios.get(`${TURF_API_END_POINT}/getTurf`);
         // Filter only badminton turfs from the API response
-        const badmintonTurfs = response.data.turfs.filter(
-          (turf) => turf.sports_type && turf.sports_type.toLowerCase() === "badminton"
+        const approvedTurfs = response.data.turfs.filter(
+          (turf) =>
+            turf.state === true &&
+            turf.sports_type &&
+            turf.sports_type.toLowerCase() === "badminton"
         );
-        setTurfs(badmintonTurfs);
+        setTurfs(approvedTurfs);
       } catch (error) {
         console.error("Error fetching turfs:", error);
       }
@@ -40,15 +43,17 @@ const BadmintonTurfPage = () => {
     navigate(`/turfs/${turf._id}`, { state: { turf } });
   };
 
-     // Function to check if the turf price falls within the selected range
-     const isPriceInRange = (price, range) => {
-      if (!range) return true; // No filter applied
-      const [min, max] = range.split("-").map(Number); // Split range into min and max values
-      return price >= min && price <= max;
-    };
+  // Function to check if the turf price falls within the selected range
+  const isPriceInRange = (price, range) => {
+    if (!range) return true; // No filter applied
+    const [min, max] = range.split("-").map(Number); // Split range into min and max values
+    return price >= min && price <= max;
+  };
 
   const filteredTurfs = turfs.filter((turf) => {
-    const matchesLocation = !filters.Location || normalizeLocation(turf.location) === normalizeLocation(filters.Location);
+    const matchesLocation =
+      !filters.Location ||
+      normalizeLocation(turf.location) === normalizeLocation(filters.Location);
     const matchesPrice = isPriceInRange(turf.price, filters.Price); // Check if price is in the selected range
     return matchesLocation && matchesPrice; // Sports filter is redundant since the turfs are already filtered for badminton
   });

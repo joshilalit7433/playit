@@ -393,18 +393,19 @@ const SingleTurfDetail = () => {
 
       {/* Conditionally render buttons only if the user is not an owner */}
       {!isOwner && (
-        <div className="flex justify-center lg:gap-x-10 mt-6">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-y-4 sm:gap-x-4 lg:gap-x-10 mt-6">
           <button
             onClick={handleProceedToBooking}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+            className="w-full sm:w-auto bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
           >
             {user ? "Proceed to Booking" : "Please log in to book"}
           </button>
           <Link
             to={`/turfs/${turf._id}/buysubscription`}
             state={{ turf: turf }}
+            className="w-full sm:w-auto"
           >
-            <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+            <button className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
               Buy Subscription
             </button>
           </Link>

@@ -101,7 +101,7 @@ export default function Navbar() {
           </div>
 
           <div className="hidden sm:flex sm:items-center sm:space-x-4">
-            {/* Hide GET PLAYit PLUS for owner */}
+            {/* Hide GET PLAYit PLUS for owner
             {user?.role !== "owner" && (
               <Link
                 to="/subscription"
@@ -109,7 +109,7 @@ export default function Navbar() {
               >
                 GET PLAYit PLUS
               </Link>
-            )}
+            )} */}
 
             {!user ? (
               !isLoginOrSignupPage && (

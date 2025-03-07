@@ -1,5 +1,6 @@
 import { Turf } from "../models/turf.model.js";
 import { User } from "../models/user.model.js";
+import { Booking } from "../models/booking.model.js"; // Assuming you have a Booking model
 
 export const postTurf = async (req, res) => {
   try {
@@ -117,32 +118,32 @@ export const getPendingTurfs = async (req, res) => {
 export const getTurfById = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     if (!id) {
       return res.status(400).json({
         success: false,
-        message: "Turf ID is required"
+        message: "Turf ID is required",
       });
     }
-    
+
     const turf = await Turf.findById(id);
-    
+
     if (!turf) {
       return res.status(404).json({
         success: false,
-        message: "Turf not found"
+        message: "Turf not found",
       });
     }
-    
+
     return res.status(200).json({
       success: true,
-      turf
+      turf,
     });
   } catch (error) {
     console.error("Error fetching turf:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch turf details"
+      message: "Failed to fetch turf details",
     });
   }
 };
@@ -185,71 +186,202 @@ export const rejectTurf = async (req, res) => {
 export const getTurfsByOwner = async (req, res) => {
   try {
     const { ownerId } = req.params;
-    
+
     if (!ownerId) {
       return res.status(400).json({
         message: "Owner ID is required",
         success: false,
       });
     }
-    
+
     const turfs = await Turf.find({ owner: ownerId });
-    
+
     return res.status(200).json({
       success: true,
-      turfs
+      turfs,
     });
   } catch (error) {
     console.error("Error fetching owner's turfs:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch owner's turfs"
+      message: "Failed to fetch owner's turfs",
     });
   }
 };
+
 export const updateBookingStatus = async (req, res) => {
   try {
     const { bookingId } = req.params;
     const { status } = req.body;
-    
+
     if (!bookingId || !status) {
       return res.status(400).json({
         success: false,
-        message: "Booking ID and status are required"
+        message: "Booking ID and status are required",
       });
     }
-    
+
     const validStatuses = ["confirmed", "cancelled", "pending"];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid status value"
+        message: "Invalid status value",
       });
     }
-    
+
     const booking = await Booking.findByIdAndUpdate(
       bookingId,
       { status },
       { new: true }
     );
-    
+
     if (!booking) {
       return res.status(404).json({
         success: false,
-        message: "Booking not found"
+        message: "Booking not found",
       });
     }
-    
+
     return res.status(200).json({
       success: true,
       message: `Booking ${status} successfully`,
-      booking
+      booking,
     });
   } catch (error) {
     console.error("Error updating booking status:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to update booking status"
+      message: "Failed to update booking status",
+    });
+  }
+};
+
+export const postRating = async (req, res) => {
+  try {
+    const { turfId } = req.params;
+    const { rating, comment, userId } = req.body; // Require userId in the request body
+
+    // Validation
+    if (!turfId) {
+      return res.status(400).json({
+        success: false,
+        message: "Turf ID is required",
+      });
+    }
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    if (!rating || typeof rating !== "number" || rating < 0 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating must be a number between 0 and 5",
+      });
+    }
+
+    // Find the turf
+    const turf = await Turf.findById(turfId);
+    if (!turf) {
+      return res.status(404).json({
+        success: false,
+        message: "Turf not found",
+      });
+    }
+
+    // Check if user already rated
+    const existingRatingIndex = turf.ratings.findIndex(
+      (r) => r.user.toString() === userId.toString()
+    );
+
+    if (existingRatingIndex !== -1) {
+      // User has already rated, update the existing rating
+      turf.ratings[existingRatingIndex].rating = rating;
+      turf.ratings[existingRatingIndex].comment =
+        comment || turf.ratings[existingRatingIndex].comment; // Update comment if provided, else keep old one
+      turf.ratings[existingRatingIndex].createdAt = Date.now(); // Optionally update timestamp
+    } else {
+      // User hasn't rated yet, add new rating
+      turf.ratings.push({
+        user: userId,
+        rating,
+        comment,
+      });
+    }
+
+    // Save and update average rating (pre-save hook will handle this)
+    await turf.save();
+
+    return res.status(200).json({
+      success: true,
+      message:
+        existingRatingIndex !== -1
+          ? "Rating updated successfully"
+          : "Rating added successfully",
+      turf: {
+        _id: turf._id,
+        name: turf.name,
+        ratings: turf.ratings,
+        averageRating: turf.averageRating,
+      },
+    });
+  } catch (error) {
+    console.error("Error posting rating:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add or update rating",
+    });
+  }
+};
+
+export const getUserRating = async (req, res) => {
+  try {
+    const { turfId, userId } = req.params;
+
+    // Validate parameters
+    if (!turfId || !userId) {
+      return res.status(400).json({
+        success: false,
+        message: "Both turf ID and user ID are required",
+      });
+    }
+
+    // Find the turf
+    const turf = await Turf.findById(turfId);
+    if (!turf) {
+      return res.status(404).json({
+        success: false,
+        message: "Turf not found",
+      });
+    }
+
+    // Find the user's rating
+    const userRating = turf.ratings.find(
+      (rating) => rating.user.toString() === userId.toString()
+    );
+
+    if (!userRating) {
+      return res.status(200).json({
+        success: true,
+        message: "User has not rated this turf",
+        rating: 0, // Return 0 if no rating found
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      rating: userRating.rating,
+      comment: userRating.comment,
+      createdAt: userRating.createdAt,
+    });
+  } catch (error) {
+    console.error("Error fetching user rating:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch user rating",
     });
   }
 };

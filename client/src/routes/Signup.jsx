@@ -12,7 +12,7 @@ export default function Signup() {
     email: "",
     password: "",
     mobilenumber: "",
-    role:""
+    role: "",
   };
 
   const navigate = useNavigate();
@@ -106,134 +106,156 @@ export default function Signup() {
       errors.role = "Role Is Required";
     }
 
-  
-
     return errors;
   };
 
   return (
     <>
-      <div className="flex justify-center items-center mt-[100px] lg:pt-[50px] lg:mb-[50px] ">
+      <div className="flex mt-[100px] justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
         <form
           onSubmit={handlesubmit}
-          className="w-[310px] h-[550px] lg:h-[700px] lg:w-[500px] bg-[#31a022] p-8 rounded-lg"
+          className="w-full max-w-md bg-[#31a022] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
         >
-          <div className="text-center mb-6">
-            <p className="text-[25px] font-bold text-white">Sign Up</p>
+          <div className="text-center mb-4 sm:mb-6">
+            <p className="text-xl sm:text-2xl font-bold text-white">Sign Up</p>
           </div>
 
           {/* Full Name Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Full Name:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <User className="text-white mr-2" /> {/* Lucide User Icon */}
+          <div className="mb-4">
+            <label className="text-base sm:text-lg text-white">
+              Full Name:
+            </label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-1">
+              <User className="text-white mr-2 h-5 w-5" />
               <input
                 type="text"
                 onChange={change}
                 placeholder="Full Name"
                 name="fullname"
-                className="bg-transparent w-full text-white focus:outline-none"
+                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
                 value={formvalues.fullname}
               />
             </div>
-            <p className="text-black">{formerrors.fullname}</p>
+            <p className="text-black text-xs sm:text-sm mt-1">
+              {formerrors.fullname}
+            </p>
           </div>
 
           {/* Email Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Email:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <Mail className="text-white mr-2" /> {/* Lucide Email Icon */}
+          <div className="mb-4">
+            <label className="text-base sm:text-lg text-white">Email:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-1">
+              <Mail className="text-white mr-2 h-5 w-5" />
               <input
                 type="email"
                 onChange={change}
                 placeholder="Email"
                 name="email"
-                className="bg-transparent w-full text-white focus:outline-none"
+                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
                 value={formvalues.email}
               />
             </div>
-            <p className="text-black">{formerrors.email}</p>
+            <p className="text-black text-xs sm:text-sm mt-1">
+              {formerrors.email}
+            </p>
           </div>
 
           {/* Password Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Password:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <Lock className="text-white mr-2" /> {/* Lucide Lock Icon */}
+          <div className="mb-4">
+            <label className="text-base sm:text-lg text-white">Password:</label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-1">
+              <Lock className="text-white mr-2 h-5 w-5" />
               <input
                 type="password"
                 onChange={change}
                 placeholder="Password"
                 name="password"
-                className="bg-transparent w-full text-white focus:outline-none"
+                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
                 value={formvalues.password}
               />
             </div>
-            <p className="text-black">{formerrors.password}</p>
+            <p className="text-black text-xs sm:text-sm mt-1">
+              {formerrors.password}
+            </p>
           </div>
 
           {/* Mobile Number Input */}
-          <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Mobile Number:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <Phone className="text-white mr-2" /> {/* Lucide Phone Icon */}
+          <div className="mb-4">
+            <label className="text-base sm:text-lg text-white">
+              Mobile Number:
+            </label>
+            <div className="flex items-center border-b-2 border-white py-2 mt-1">
+              <Phone className="text-white mr-2 h-5 w-5" />
               <input
                 type="number"
                 onChange={change}
                 placeholder="Mobile Number"
                 name="mobilenumber"
-                className="bg-transparent w-full text-white focus:outline-none"
+                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
                 value={formvalues.mobilenumber}
               />
             </div>
-            <p className="text-black">{formerrors.mobilenumber}</p>
+            <p className="text-black text-xs sm:text-sm mt-1">
+              {formerrors.mobilenumber}
+            </p>
           </div>
 
-           {/* Role Input */}
-           <div className="mb-[20px]">
-            <label className="text-[18px] text-white">Role:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-2">
-              <input
-                type="radio"
-                id="User"
-                name="role"
-                value="user"
-                onChange={change}
-              />
-              <label for="html" className="text-white text-[18px]">
-                User
-              </label>
+          {/* Role Input */}
+          <div className="mb-4">
+            <label className="text-base sm:text-lg text-white">Role:</label>
+            <div className="flex items-center space-x-4 border-b-2 border-white py-2 mt-1">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="User"
+                  name="role"
+                  value="user"
+                  onChange={change}
+                  className="mr-2"
+                />
+                <label
+                  htmlFor="User"
+                  className="text-white text-sm sm:text-base"
+                >
+                  User
+                </label>
+              </div>
 
-              <input
-                type="radio"
-                id="Owner"
-                name="role"
-                value="owner"
-                className="lg:ml-4"
-                onChange={change}
-              />
-              <label htmlFor="Owner" className="text-white text-[18px]">
-                Owner
-              </label>
-             
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="Owner"
+                  name="role"
+                  value="owner"
+                  onChange={change}
+                  className="mr-2"
+                />
+                <label
+                  htmlFor="Owner"
+                  className="text-white text-sm sm:text-base"
+                >
+                  Owner
+                </label>
+              </div>
             </div>
-            
-            <p className="text-black">{formerrors.role}</p>
+            <p className="text-black text-xs sm:text-sm mt-1">
+              {formerrors.role}
+            </p>
           </div>
-
-          
 
           {/* Submit Button */}
-          <div className="flex justify-center">
-            <button className="text-[20px] w-full py-2 bg-white text-[#31a022] rounded-lg font-bold">
+          <div className="flex justify-center mt-6">
+            <button className="text-base sm:text-lg w-full py-2 bg-white text-[#31a022] rounded-lg font-bold transition-colors hover:bg-gray-100">
               SIGN UP
             </button>
           </div>
 
           {/* Already have an account? */}
           <div className="text-center mt-4">
-            <Link to="/login" className="text-white underline">
+            <Link
+              to="/login"
+              className="text-white text-sm sm:text-base underline hover:text-gray-200"
+            >
               Already have an account?
             </Link>
           </div>

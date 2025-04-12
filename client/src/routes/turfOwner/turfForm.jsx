@@ -8,7 +8,7 @@ import { TURF_API_END_POINT } from "../../utils/constant.js";
 const TurfForm = () => {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (!user) {
       toast.error("You must be logged in to add a turf", {
@@ -19,7 +19,7 @@ const TurfForm = () => {
       navigate("/login");
     }
   }, [user, navigate]);
-  
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     turfName: "",
@@ -53,19 +53,19 @@ const TurfForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Check all required fields
     const requiredFields = [
-      { field: 'turfName', label: 'Turf Name' },
-      { field: 'turfImages', label: 'Turf Images' },
-      { field: 'turfAddress', label: 'Address' },
-      { field: 'location', label: 'Location' },
-      { field: 'pricePerHour', label: 'Price per hour' },
-      { field: 'description', label: 'Description' },
-      { field: 'sports_type', label: 'Sports Type' },
-      { field: 'linkes', label: 'Google Maps Link' }
+      { field: "turfName", label: "Turf Name" },
+      { field: "turfImages", label: "Turf Images" },
+      { field: "turfAddress", label: "Address" },
+      { field: "location", label: "Location" },
+      { field: "pricePerHour", label: "Price per hour" },
+      { field: "description", label: "Description" },
+      { field: "sports_type", label: "Sports Type" },
+      { field: "linkes", label: "Google Maps Link" },
     ];
-    
+
     for (const { field, label } of requiredFields) {
       if (!formData[field]) {
         toast.error(`Please fill in the ${label} field`, {
@@ -76,7 +76,7 @@ const TurfForm = () => {
         return;
       }
     }
-    
+
     setLoading(true);
 
     try {
@@ -90,17 +90,17 @@ const TurfForm = () => {
           images: formData.turfImages,
           price: Number(formData.pricePerHour),
           sports_type: formData.sports_type,
-          ratings: 0,
+          ratings: [],
           linkes: formData.linkes,
           address: formData.turfAddress,
           state: false,
-          owner: user?._id || "64f5c1d55c3d3e001c8947a1"
+          owner: user?._id || "64f5c1d55c3d3e001c8947a1",
         },
-        { 
+        {
           withCredentials: true,
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -124,24 +124,27 @@ const TurfForm = () => {
       }
     } catch (error) {
       console.error("Error details:", error);
-      
+
       if (error.response) {
         console.error("Error response data:", error.response.data);
         console.error("Error response status:", error.response.status);
-        
+
         // Check for specific error types
         if (error.response.status === 401) {
-          toast.error("You must be logged in to add a turf. Please log in again.", {
-            position: "top-center",
-            autoClose: 3000,
-            theme: "dark",
-          });
+          toast.error(
+            "You must be logged in to add a turf. Please log in again.",
+            {
+              position: "top-center",
+              autoClose: 3000,
+              theme: "dark",
+            }
+          );
           // Optionally redirect to login
           // navigate('/login');
           return;
         }
       }
-      
+
       toast.error(
         error.response?.data?.message ||
           "Failed to add turf. Please try again.",

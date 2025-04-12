@@ -9,25 +9,61 @@ function DisplayBookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [systemTime, setSystemTime] = useState(new Date());
-  const [ratings, setRatings] = useState({}); // NEW: Ratings state
+  const [ratings, setRatings] = useState({});
 
   // Update system time every second
   useEffect(() => {
     const timer = setInterval(() => {
       setSystemTime(new Date());
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch bookings
+  // Fetch bookings and user ratings
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchBookingsAndRatings = async () => {
       try {
-        const response = await axios.get(
+        setLoading(true);
+
+        // Fetch bookings
+        const bookingsResponse = await axios.get(
           `http://localhost:8000/api/v1/booking/get-user-bookings/${user?._id}`
         );
-        setBookings(response.data.bookings || []);
+        const fetchedBookings = bookingsResponse.data.bookings || [];
+        setBookings(fetchedBookings);
+
+        // Fetch ratings for each turf
+        const userRatings = {};
+
+        // Create an array of promises for fetching ratings
+        const ratingPromises = fetchedBookings.map(async (booking) => {
+          if (booking.turfId && booking.turfId._id) {
+            try {
+              const ratingResponse = await axios.get(
+                `http://localhost:8000/api/v1/turf/${booking.turfId._id}/user-rating/${user?._id}`
+              );
+
+              if (
+                ratingResponse.data.success &&
+                ratingResponse.data.rating !== undefined
+              ) {
+                userRatings[booking._id] = ratingResponse.data.rating;
+              }
+            } catch (ratingError) {
+              console.error(
+                "Error fetching rating for turf:",
+                booking.turfId._id,
+                ratingError
+              );
+            }
+          }
+        });
+
+        // Wait for all rating requests to complete
+        await Promise.all(ratingPromises);
+
+        // Update ratings state
+        setRatings(userRatings);
       } catch (err) {
         console.error("Error fetching bookings:", err.message);
         setError("Failed to fetch bookings.");
@@ -37,10 +73,11 @@ function DisplayBookings() {
     };
 
     if (user?._id) {
-      fetchBookings();
+      fetchBookingsAndRatings();
     }
   }, [user]);
 
+  // Check if booking is expired
   const isBookingExpired = (bookingDate, endTime) => {
     try {
       const currentSystemTime = new Date();
@@ -66,10 +103,10 @@ function DisplayBookings() {
     }
   };
 
-  // NEW: Handle star click (rating selection and deselection)
-  const handleRating = async (bookingId, rating) => {
+  // Handle star click for rating
+  const handleRating = async (turfId, bookingId, rating) => {
     try {
-      const currentRating = ratings[bookingId];
+      const currentRating = ratings[bookingId] || 0;
       const newRating = currentRating === rating ? rating - 1 : rating;
 
       // Update local state
@@ -77,15 +114,14 @@ function DisplayBookings() {
         ...prevRatings,
         [bookingId]: newRating,
       }));
-      
+
       // Send rating to backend
       const response = await axios.post(
-        `http://localhost:8000/api/v1/booking/rate/${bookingId}`,
-        { rating: newRating }
+        `http://localhost:8000/api/v1/turf/${turfId}/rating`,
+        { rating: newRating, userId: user._id }
       );
 
       if (!response.data.success) {
-        // If the API call fails, revert the local state
         setRatings((prevRatings) => ({
           ...prevRatings,
           [bookingId]: currentRating,
@@ -94,7 +130,6 @@ function DisplayBookings() {
       }
     } catch (error) {
       console.error("Error saving rating:", error);
-      // Revert the local state on error
       setRatings((prevRatings) => ({
         ...prevRatings,
         [bookingId]: ratings[bookingId],
@@ -102,27 +137,31 @@ function DisplayBookings() {
     }
   };
 
-  // NEW: Render stars component with improved design and individual star deselection
-  const renderStars = (bookingId) => {
+  // Render star rating UI
+  const renderStars = (turfId, bookingId) => {
     const currentRating = ratings[bookingId] || 0;
 
     return (
       <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
         <p className="text-sm font-medium text-gray-700 mb-2">
-          Rate your experience
+          {currentRating > 0 ? "Your rating" : "Rate your experience"}
         </p>
         <div className="flex items-center justify-center space-x-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
-              onClick={() => handleRating(bookingId, star)}
+              onClick={() => handleRating(turfId, bookingId, star)}
               className={`focus:outline-none transform hover:scale-110 transition-transform duration-200 ${
                 star <= currentRating ? "text-yellow-400" : "text-gray-300"
               }`}
-              title={currentRating === star ? "Click to deselect this star" : `Rate ${star} stars`}
+              title={
+                currentRating === star
+                  ? "Click to deselect this star"
+                  : `Rate ${star} stars`
+              }
             >
               <svg
-                className="w-8 h-8"
+                className="w-6 h-6"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -132,40 +171,35 @@ function DisplayBookings() {
             </button>
           ))}
         </div>
-        {currentRating > 0 ? (
-          <div className="text-center mt-2">
-           
-          </div>
-        ) : null}
+        {currentRating > 0 && (
+          <p className="text-center text-sm text-gray-600 mt-2">
+            You rated: {currentRating} star{currentRating !== 1 ? "s" : ""}
+          </p>
+        )}
       </div>
     );
   };
 
+  // Sort bookings by createdAt (most recent first)
   const sortedBookings = [...bookings].sort((a, b) => {
-    const aDate = new Date(a.bookingDate);
-    const bDate = new Date(b.bookingDate);
-    const [aHours, aMinutes] = a.startTime.split(":").map(Number);
-    const [bHours, bMinutes] = b.startTime.split(":").map(Number);
-
-    aDate.setHours(aHours, aMinutes, 0, 0);
-    bDate.setHours(bHours, bMinutes, 0, 0);
-
-    return bDate - aDate;
+    return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center items-center">
-      <div className="max-w-4xl w-full p-6 bg-white shadow-md rounded-lg">
-        <h1 className="text-2xl font-semibold mb-6 text-center">
+    <div className="bg-gray-100 min-h-screen mt-[50px] flex justify-center items-center py-10">
+      <div className="max-w-4xl w-full p-4 md:p-6 bg-white shadow-md rounded-lg">
+        <h1 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-center">
           Your Bookings
         </h1>
 
         {loading ? (
-          <p className="text-center text-gray-500">Loading bookings...</p>
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : sortedBookings.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-4 md:space-y-6">
             {sortedBookings.map((booking) => {
               const expired = isBookingExpired(
                 booking.bookingDate,
@@ -175,49 +209,59 @@ function DisplayBookings() {
               return (
                 <div
                   key={booking._id}
-                  className={`flex flex-col border rounded-lg shadow p-4 ${
+                  className={`flex flex-col border rounded-lg shadow p-3 md:p-4 ${
                     expired ? "bg-gray-50" : "bg-white"
                   }`}
                 >
-                  <div className="flex items-center">
+                  <div className="flex flex-col md:flex-row items-start">
                     {/* Turf Image */}
-                    <div className="w-1/4">
+                    <div className="w-full md:w-1/4 mb-3 md:mb-0">
                       <img
                         src={
                           booking.turfId?.images ||
                           "https://via.placeholder.com/150"
                         }
                         alt={booking.turfId?.name || "Turf Image"}
-                        className="w-full h-full rounded-lg object-cover"
+                        className="w-full h-32 rounded-lg object-cover"
                       />
                     </div>
 
                     {/* Booking Details */}
-                    <div className="w-2/4 px-4">
+                    <div className="w-full md:w-2/4 md:px-4">
                       <p className="text-lg font-semibold">
-                        Turf Name: {booking.turfId?.name || "Unknown"}
+                        {booking.turfId?.name || "Unknown"}
                       </p>
-                      <p className="text-sm text-gray-700 mt-2">
-                        <strong>Price:</strong> ₹{booking.turfId?.price || 0}/hour
+                      <p className="text-sm text-gray-700 mt-1 md:mt-2">
+                        <strong>Price:</strong> ₹{booking.turfId?.price || 0}
+                        /hour
                       </p>
-                      <p className="text-sm text-gray-700 mt-2">
+                      <p className="text-sm text-gray-700 mt-1 md:mt-2">
                         <strong>Location:</strong>{" "}
                         {booking.turfId?.location || "Unknown"}
                       </p>
-                      <p className="text-sm text-gray-700 mt-2">
+                      <p className="text-sm text-gray-700 mt-1 md:mt-2">
+                        <strong>Amount Paid:</strong>{" "}
+                        {booking.amountPaid || "Unknown"}
+                      </p>
+                      <p className="text-sm text-gray-700 mt-1 md:mt-2">
                         <strong>Date:</strong>{" "}
                         {format(new Date(booking.bookingDate), "dd/MM/yyyy")}
                       </p>
-                      <p className="text-sm text-gray-700 mt-2">
-                        <strong>Start Time:</strong> {booking.startTime}
+                      <p className="text-sm text-gray-700 mt-1 md:mt-2">
+                        <strong>Time:</strong> {booking.startTime} -{" "}
+                        {booking.endTime}
                       </p>
-                      <p className="text-sm text-gray-700 mt-2">
-                        <strong>End Time:</strong> {booking.endTime}
+                      <p className="text-sm text-gray-500 mt-1 md:mt-2">
+                        <strong>Booked on:</strong>{" "}
+                        {format(
+                          new Date(booking.createdAt),
+                          "dd/MM/yyyy HH:mm"
+                        )}
                       </p>
                     </div>
 
                     {/* Booking Status */}
-                    <div className="w-1/4 text-center">
+                    <div className="w-full md:w-1/4 text-center mt-3 md:mt-0">
                       <p
                         className={`text-sm font-medium p-2 rounded-lg ${
                           expired
@@ -232,10 +276,10 @@ function DisplayBookings() {
                     </div>
                   </div>
 
-                  {/* Rating Section for Expired Bookings */}
+                  {/* Rating UI - Show only if expired */}
                   {expired && (
-                    <div className="mt-4 border-t pt-4">
-                      {renderStars(booking._id)}
+                    <div className="mt-4">
+                      {renderStars(booking.turfId?._id, booking._id)}
                     </div>
                   )}
                 </div>
@@ -243,7 +287,7 @@ function DisplayBookings() {
             })}
           </div>
         ) : (
-          <p className="text-center text-gray-500">No bookings found.</p>
+          <p className="text-center text-gray-500 py-8">No bookings found.</p>
         )}
       </div>
     </div>

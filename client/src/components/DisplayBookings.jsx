@@ -249,5 +249,4 @@ function DisplayBookings() {
     </div>
   );
 }
-
 export default DisplayBookings;

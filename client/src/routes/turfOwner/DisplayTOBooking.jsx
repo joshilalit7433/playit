@@ -143,7 +143,7 @@ const DisplayTOBooking = () => {
               turf.
             </p>
             <button
-              onClick={() => navigate("/add-turf")}
+              onClick={() => navigate("/turfform")}
               className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200 inline-block"
             >
               Add Your First Turf

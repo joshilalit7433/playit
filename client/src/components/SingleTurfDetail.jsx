@@ -311,7 +311,27 @@ const SingleTurfDetail = () => {
         <strong>Price:</strong> ₹{turf.price} per hour
       </p>
       <p className="text-lg text-gray-700 mb-2">
-        <strong>Ratings:</strong> {turf.ratings} / 5
+        <strong>Ratings:</strong>
+        {turf.ratings && turf.ratings.length > 0 ? (
+          <ul className="mt-2">
+            {turf.ratings.map((rating, index) => (
+              <li key={rating._id || index} className="mb-2">
+                <p>
+                  <strong>User:</strong> {rating.user || "Anonymous"}
+                </p>
+                <p>
+                  <strong>Rating:</strong> {rating.rating} / 5
+                </p>
+                {/* <p>
+                  <strong>Comment:</strong>{" "}
+                  {rating.comment || "No comment provided"}
+                </p> */}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          " No ratings available"
+        )}
       </p>
       <p className="text-lg text-gray-700 mb-4">
         <strong>Description:</strong> {turf.description}

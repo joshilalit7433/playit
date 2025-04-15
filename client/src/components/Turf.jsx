@@ -47,7 +47,7 @@ export default function Turf({ filters }) {
   });
 
   return (
-    <div className="lg:mt-20 px-4">
+    <div className="lg:mt-20 px-4 lg:mb-20">
       <h1 className="lg:ml-[250px] text-center text-2xl lg:text-3xl font-semibold mb-6">
         Available Turfs
       </h1>

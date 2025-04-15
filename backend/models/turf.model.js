@@ -37,10 +37,7 @@ const turfSchema = new mongoose.Schema(
           min: 0,
           max: 5, // Assuming a 5-star rating system
         },
-        comment: {
-          type: String,
-          trim: true,
-        },
+
         createdAt: {
           type: Date,
           default: Date.now,

@@ -53,10 +53,10 @@ const AdminDashboard = () => {
           });
           navigate("/login");
         } else {
-          toast.error("Failed to fetch pending turf requests", {
-            position: "top-center",
-            theme: "dark",
-          });
+          // toast.error("Failed to fetch pending turf requests", {
+          //   position: "top-center",
+          //   theme: "dark",
+          // });
         }
         setLoading(false);
       }
@@ -105,9 +105,9 @@ const AdminDashboard = () => {
                   <p className="text-gray-600 mb-2">
                     Price: ₹{turf.price}/hour
                   </p>
-                  <p className="text-gray-600 mb-2">
+                  {/* <p className="text-gray-600 mb-2">
                     Owner: {turf.owner ? turf.owner.fullname : "Unknown"}
-                  </p>
+                  </p> */}
                   <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm mt-2">
                     Status: Pending
                   </div>

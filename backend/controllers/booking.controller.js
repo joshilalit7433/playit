@@ -111,28 +111,30 @@ export const displayTurfBookings = async (req, res) => {
   try {
     const { turfId } = req.params;
 
-    // Fetch bookings for the turf, including user details
     const bookings = await Booking.find({ turfId })
       .populate({
         path: "userId",
-        select: "fullname email mobilenumber", // Changed to match frontend field names
+        select: "fullname email mobilenumber",
       })
-      .sort({ bookingDate: -1 }); // Sort by booking date, most recent first
+      .sort({ bookingDate: -1 });
 
-    if (!bookings || bookings.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No bookings found for this turf." });
-    }
-
-    return res.status(200).json({ bookings });
+    return res.status(200).json({
+      success: true,
+      message:
+        bookings.length > 0
+          ? "Turf bookings retrieved successfully"
+          : "No bookings found for this turf.",
+      bookings,
+    });
   } catch (error) {
     console.error("Error fetching turf bookings:", error);
-    return res.status(500).json({ message: "Failed to fetch turf bookings." });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch turf bookings.",
+      error: error.message,
+    });
   }
 };
-
-
 
 // ... existing controller functions ...
 
@@ -188,4 +190,3 @@ export const rateBooking = async (req, res) => {
     });
   }
 };
-

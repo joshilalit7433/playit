@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const DisplayTOBooking = () => {
   const { user } = useSelector((store) => store.auth);
   const [ownedTurfs, setOwnedTurfs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Initialize navigate
+  const [totalBalance, setTotalBalance] = useState(0); // 👈 new state
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOwnedTurfs = async () => {
+    const fetchOwnedTurfsAndBalance = async () => {
       try {
         if (!user?._id) {
           setError("User not authenticated");
@@ -20,12 +21,31 @@ const DisplayTOBooking = () => {
           return;
         }
 
+        // Step 1: Fetch Turfs
         const turfsResponse = await axios.get(
           `http://localhost:8000/api/v1/turf/owner-turfs/${user._id}`
         );
 
         if (turfsResponse.data.success) {
-          setOwnedTurfs(turfsResponse.data.turfs);
+          const turfs = turfsResponse.data.turfs;
+          setOwnedTurfs(turfs);
+
+          // Step 2: For each turf, fetch bookings and calculate total
+          let total = 0;
+          for (const turf of turfs) {
+            const bookingsRes = await axios.get(
+              `http://localhost:8000/api/v1/booking/get-turf-bookings/${turf._id}`
+            );
+
+            const turfBookings = bookingsRes?.data?.bookings || [];
+            const turfTotal = turfBookings.reduce(
+              (acc, booking) => acc + (booking.amountPaid || 0),
+              0
+            );
+            total += turfTotal;
+          }
+
+          setTotalBalance(total); // 👈 update total balance state
         } else {
           setError("Failed to fetch owned turfs");
         }
@@ -41,10 +61,9 @@ const DisplayTOBooking = () => {
       }
     };
 
-    fetchOwnedTurfs();
+    fetchOwnedTurfsAndBalance();
   }, [user]);
 
-  // Function to handle navigation to turf details
   const handleViewDetails = (turf) => {
     navigate(`/turfs/${turf._id}`, { state: { turf } });
   };
@@ -54,11 +73,9 @@ const DisplayTOBooking = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Your Turfs</h1>
-          {/* <button
-            onClick={() => navigate("/turfForm")}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition duration-200">
-            Add New Turf
-          </button> */}
+          <div className="text-xl font-semibold text-green-600">
+            Total Earnings: ₹{totalBalance}
+          </div>
         </div>
 
         {loading ? (
@@ -143,9 +160,9 @@ const DisplayTOBooking = () => {
             </p>
             <button
               onClick={() => navigate("/turfform")}
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition duration-200 inline-block"
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
             >
-              Add Your First Turf
+              Add Turf
             </button>
           </div>
         )}
